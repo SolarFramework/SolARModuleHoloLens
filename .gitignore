@@ -1,0 +1,76 @@
+*.user
+
+*-Debug
+
+*-Release
+
+*.vcxproj*
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+build/
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+#others
+
+*.rej
+*.stash
+*.rc
+*.res
+*.exp
+*.ilk
+*.pdb
+*.*pre1
+*.autosave
+*.project
+
+# Visual Studio files
+.vs*
+x64*
+
+*.txt
+*.log
+*.tlog
+*.TMP
+*.tmp
+
+# documentation
+doc/
+doxygen/
+
+
+bcom-SolARModuleHoloLens.pc
+SolARModuleHoloLens-InstallDependencies_debug.bat
+SolARModuleHoloLens-Installvclib-debug.bat
+SolARModuleHoloLens-Installvclib-release.bat
+SolARModuleHoloLens-InstallDependencies_release.bat

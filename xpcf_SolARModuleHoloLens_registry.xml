@@ -1,0 +1,10 @@
+<xpcf-registry>
+
+<module uuid="432dce25-0238-4c0a-85b3-276979cb85c0" name="SolARModuleHoloLens" description="Module for using HoloLens Research Mode sensors within SolAR" path="$REMAKENROOT/SolARModuleHoloLens/0.7.0/lib/x86_64/shared">
+<component uuid="b5f5f897-1f0e-4268-be2d-c344170690e8" name="SolARBuiltInSLAM" description="Component for retrieving data from a device that has a built-in SLAM capability">
+	<interface uuid="125f2007-1bf9-421d-9367-fbdc1210d006" name="IComponentIntrospect" description="IComponentIntrospect"/>
+	<interface uuid="999085e6-1d11-41a5-8cca-3daf4e02e941" name="IBuiltInSLAM" description="Interface for retrieving data from a device that has a built-in SLAM capability"/>
+</component>
+</module>
+
+</xpcf-registry>
