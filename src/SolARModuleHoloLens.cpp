@@ -19,8 +19,6 @@
 
 #include "SolARBuiltInSLAM.h"
 
-#define XPCFVERSION 3.5.0
-
 namespace xpcf=org::bcom::xpcf;
 
 XPCF_DECLARE_MODULE("432dce25-0238-4c0a-85b3-276979cb85c0", "SolARModuleHoloLens", "Module for using HoloLens Research Mode sensors within SolAR");

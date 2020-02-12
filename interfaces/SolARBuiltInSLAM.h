@@ -40,6 +40,7 @@ public:
     ~SolARBuiltInSLAM() override;
 
     xpcf::XPCFErrorCode onConfigured() override final;
+
     void unloadComponent() override final;
 
     /// @brief Start the connection to the device for sensors data streaming.
@@ -60,15 +61,16 @@ public:
 
     /// @brief Whether or not the device is simulated or online.
     /// @return True is the device is online, False is simulated.
-	bool isProxy() override { return m_isProxy; };
+	bool isProxy() override { return m_isProxy == 1; };
 
-    /// @brief Set IP and port for remote connection to the device.
-    void setConnectionParams(const std::string & ip, const std::string & port) override;
+	/// @brief Set IP and port for remote connection to the device.
+	void setConnectionParams(const std::string & ip, const std::string & port) override;
 
 private:
 	std::string m_deviceAddress;
-	bool m_isProxy;
+	int m_isProxy;
 	std::unique_ptr<Streamer::Stub> m_stub;
+	bool m_isClientConnected;
 
 	std::vector<std::string> m_sensorList;
 };

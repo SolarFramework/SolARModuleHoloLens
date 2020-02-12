@@ -777,9 +777,11 @@ class ImageRPC :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kDataFieldNumber = 1,
+    kDataFieldNumber = 3,
+    kWidthFieldNumber = 1,
+    kHeightFieldNumber = 2,
   };
-  // bytes data = 1;
+  // bytes data = 3;
   void clear_data();
   const std::string& data() const;
   void set_data(const std::string& value);
@@ -795,12 +797,32 @@ class ImageRPC :
   std::string* _internal_mutable_data();
   public:
 
+  // int32 width = 1;
+  void clear_width();
+  ::PROTOBUF_NAMESPACE_ID::int32 width() const;
+  void set_width(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_width() const;
+  void _internal_set_width(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 height = 2;
+  void clear_height();
+  ::PROTOBUF_NAMESPACE_ID::int32 height() const;
+  void set_height(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_height() const;
+  void _internal_set_height(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:sensorStreaming.ImageRPC)
  private:
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr data_;
+  ::PROTOBUF_NAMESPACE_ID::int32 width_;
+  ::PROTOBUF_NAMESPACE_ID::int32 height_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_sensorStreaming_2eproto;
 };
@@ -1438,7 +1460,47 @@ inline void PoseRPC::set_m44(float value) {
 
 // ImageRPC
 
-// bytes data = 1;
+// int32 width = 1;
+inline void ImageRPC::clear_width() {
+  width_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 ImageRPC::_internal_width() const {
+  return width_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 ImageRPC::width() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.ImageRPC.width)
+  return _internal_width();
+}
+inline void ImageRPC::_internal_set_width(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  width_ = value;
+}
+inline void ImageRPC::set_width(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_width(value);
+  // @@protoc_insertion_point(field_set:sensorStreaming.ImageRPC.width)
+}
+
+// int32 height = 2;
+inline void ImageRPC::clear_height() {
+  height_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 ImageRPC::_internal_height() const {
+  return height_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 ImageRPC::height() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.ImageRPC.height)
+  return _internal_height();
+}
+inline void ImageRPC::_internal_set_height(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  height_ = value;
+}
+inline void ImageRPC::set_height(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_height(value);
+  // @@protoc_insertion_point(field_set:sensorStreaming.ImageRPC.height)
+}
+
+// bytes data = 3;
 inline void ImageRPC::clear_data() {
   data_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
