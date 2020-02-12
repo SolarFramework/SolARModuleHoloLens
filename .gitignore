@@ -59,6 +59,7 @@ build/
 x64*
 
 *.txt
+!packagedependencies.txt
 *.log
 *.tlog
 *.TMP
