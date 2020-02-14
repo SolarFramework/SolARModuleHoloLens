@@ -1,2 +1,2 @@
-grpc|1.27.1|grpc|thirdParties
+grpc|1.27.1|grpc|thirdParties@github|https://github.com/SolarFramework/SolarFramework/releases/download|static
 SolARFramework|0.7.0|SolARFramework|SolARBuild@github|https://github.com/SolarFramework/SolarFramework/releases/download

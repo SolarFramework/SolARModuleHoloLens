@@ -7,8 +7,8 @@
 #include "datastructure/Image.h"
 #include "xpcf/component/ConfigurableBase.h"
 
-#include "sensorStreaming.grpc.pb.h"
-#include "sensorStreaming.pb.h"
+#include "sensorStreaming/sensorStreaming.grpc.pb.h"
+#include "sensorStreaming/sensorStreaming.pb.h"
 
 #include <string>
 #include <vector>
@@ -37,7 +37,7 @@ public:
     SolARBuiltInSLAM();
 
     /// @brief Specify the IBuiltInSLAM destructor class
-    ~SolARBuiltInSLAM() override;
+    ~SolARBuiltInSLAM();
 
     xpcf::XPCFErrorCode onConfigured() override final;
 
@@ -62,9 +62,6 @@ public:
     /// @brief Whether or not the device is simulated or online.
     /// @return True is the device is online, False is simulated.
 	bool isProxy() override { return m_isProxy == 1; };
-
-	/// @brief Set IP and port for remote connection to the device.
-	void setConnectionParams(const std::string & ip, const std::string & port) override;
 
 private:
 	std::string m_deviceAddress;

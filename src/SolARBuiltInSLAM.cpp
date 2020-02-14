@@ -13,6 +13,7 @@ using sensorStreaming::Streamer;
 using sensorStreaming::NameRPC;
 using sensorStreaming::CameraIntrinsicsRPC;
 using sensorStreaming::PoseRPC;
+using sensorStreaming::MatRPC;
 using sensorStreaming::ImageRPC;
 using sensorStreaming::SensorFrameRPC;
 
@@ -60,26 +61,45 @@ Image ParseImageRPC(ImageRPC imageRPC)
 	return img;
 }
 
+PoseMatrix ParseMatRPC(MatRPC matRPC)
+{
+	PoseMatrix mat;
+	mat(0, 0) = matRPC.m11();
+	mat(0, 1) = matRPC.m12();
+	mat(0, 2) = matRPC.m13();
+	mat(0, 3) = matRPC.m14();
+	mat(1, 0) = matRPC.m21();
+	mat(1, 1) = matRPC.m22();
+	mat(1, 2) = matRPC.m23();
+	mat(1, 3) = matRPC.m24();
+	mat(2, 0) = matRPC.m31();
+	mat(2, 1) = matRPC.m32();
+	mat(2, 2) = matRPC.m33();
+	mat(2, 3) = matRPC.m34();
+	mat(3, 0) = matRPC.m41();
+	mat(3, 1) = matRPC.m42();
+	mat(3, 2) = matRPC.m43();
+	mat(3, 3) = matRPC.m44();
+
+	return mat;
+}
+
 PoseMatrix ParsePoseRPC(PoseRPC poseRPC)
 {
-	PoseMatrix pose;
-	pose(0, 0) = poseRPC.m11();
-	pose(0, 1) = poseRPC.m12();
-	pose(0, 2) = poseRPC.m13();
-	pose(0, 3) = poseRPC.m14();
-	pose(1, 0) = poseRPC.m21();
-	pose(1, 1) = poseRPC.m22();
-	pose(1, 2) = poseRPC.m23();
-	pose(1, 3) = poseRPC.m24();
-	pose(2, 0) = poseRPC.m31();
-	pose(2, 1) = poseRPC.m32();
-	pose(2, 2) = poseRPC.m33();
-	pose(2, 3) = poseRPC.m34();
-	pose(3, 0) = poseRPC.m41();
-	pose(3, 1) = poseRPC.m42();
-	pose(3, 2) = poseRPC.m43();
-	pose(3, 3) = poseRPC.m44();
+	PoseMatrix camProj = ParseMatRPC(poseRPC.cameraproj());
+	PoseMatrix camView = ParseMatRPC(poseRPC.cameraview());
+	PoseMatrix frameToOrigin = ParseMatRPC(poseRPC.frametoorigin());
 
+	PoseMatrix pose;
+	// TODO check formula
+	if (!camProj.all()) // Projection matrix is null
+	{
+		pose = camView * frameToOrigin;
+	}
+	else
+	{
+		pose = camProj * camView * frameToOrigin;
+	}
 	return pose;
 }
 
@@ -129,7 +149,7 @@ FrameworkReturnCode SolARBuiltInSLAM::stop()
 	return FrameworkReturnCode::_SUCCESS;
 }
 
-FrameworkReturnCode SolARBuiltInSLAM::getLastCapture(std::vector<Image> & frames, std::vector<PoseMatrix> & pose)
+FrameworkReturnCode SolARBuiltInSLAM::getLastCapture(std::vector<Image> & frames, std::vector<PoseMatrix> & poses)
 {
 	// One call should be enough to get a constant stream of data (?)
 	SensorFrameRPC sensorFrame;
@@ -143,10 +163,12 @@ FrameworkReturnCode SolARBuiltInSLAM::getLastCapture(std::vector<Image> & frames
 		if (sensorFrame.has_image())
 		{
 			Image img = ParseImageRPC(sensorFrame.image());
+            frames.emplace_back(img);
 		}
 		if (sensorFrame.has_pose())
 		{
 			PoseMatrix pose = ParsePoseRPC(sensorFrame.pose());
+            poses.emplace_back(pose);
 		}
 	}
 	// Stream ended

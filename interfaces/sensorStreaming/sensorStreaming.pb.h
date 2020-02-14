@@ -47,7 +47,7 @@ struct TableStruct_sensorStreaming_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[5]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[6]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -61,6 +61,9 @@ extern CameraIntrinsicsRPCDefaultTypeInternal _CameraIntrinsicsRPC_default_insta
 class ImageRPC;
 class ImageRPCDefaultTypeInternal;
 extern ImageRPCDefaultTypeInternal _ImageRPC_default_instance_;
+class MatRPC;
+class MatRPCDefaultTypeInternal;
+extern MatRPCDefaultTypeInternal _MatRPC_default_instance_;
 class NameRPC;
 class NameRPCDefaultTypeInternal;
 extern NameRPCDefaultTypeInternal _NameRPC_default_instance_;
@@ -74,6 +77,7 @@ extern SensorFrameRPCDefaultTypeInternal _SensorFrameRPC_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::sensorStreaming::CameraIntrinsicsRPC* Arena::CreateMaybeMessage<::sensorStreaming::CameraIntrinsicsRPC>(Arena*);
 template<> ::sensorStreaming::ImageRPC* Arena::CreateMaybeMessage<::sensorStreaming::ImageRPC>(Arena*);
+template<> ::sensorStreaming::MatRPC* Arena::CreateMaybeMessage<::sensorStreaming::MatRPC>(Arena*);
 template<> ::sensorStreaming::NameRPC* Arena::CreateMaybeMessage<::sensorStreaming::NameRPC>(Arena*);
 template<> ::sensorStreaming::PoseRPC* Arena::CreateMaybeMessage<::sensorStreaming::PoseRPC>(Arena*);
 template<> ::sensorStreaming::SensorFrameRPC* Arena::CreateMaybeMessage<::sensorStreaming::SensorFrameRPC>(Arena*);
@@ -378,23 +382,23 @@ class CameraIntrinsicsRPC :
 };
 // -------------------------------------------------------------------
 
-class PoseRPC :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensorStreaming.PoseRPC) */ {
+class MatRPC :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensorStreaming.MatRPC) */ {
  public:
-  PoseRPC();
-  virtual ~PoseRPC();
+  MatRPC();
+  virtual ~MatRPC();
 
-  PoseRPC(const PoseRPC& from);
-  PoseRPC(PoseRPC&& from) noexcept
-    : PoseRPC() {
+  MatRPC(const MatRPC& from);
+  MatRPC(MatRPC&& from) noexcept
+    : MatRPC() {
     *this = ::std::move(from);
   }
 
-  inline PoseRPC& operator=(const PoseRPC& from) {
+  inline MatRPC& operator=(const MatRPC& from) {
     CopyFrom(from);
     return *this;
   }
-  inline PoseRPC& operator=(PoseRPC&& from) noexcept {
+  inline MatRPC& operator=(MatRPC&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -412,37 +416,37 @@ class PoseRPC :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const PoseRPC& default_instance();
+  static const MatRPC& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const PoseRPC* internal_default_instance() {
-    return reinterpret_cast<const PoseRPC*>(
-               &_PoseRPC_default_instance_);
+  static inline const MatRPC* internal_default_instance() {
+    return reinterpret_cast<const MatRPC*>(
+               &_MatRPC_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     2;
 
-  friend void swap(PoseRPC& a, PoseRPC& b) {
+  friend void swap(MatRPC& a, MatRPC& b) {
     a.Swap(&b);
   }
-  inline void Swap(PoseRPC* other) {
+  inline void Swap(MatRPC* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline PoseRPC* New() const final {
-    return CreateMaybeMessage<PoseRPC>(nullptr);
+  inline MatRPC* New() const final {
+    return CreateMaybeMessage<MatRPC>(nullptr);
   }
 
-  PoseRPC* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<PoseRPC>(arena);
+  MatRPC* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<MatRPC>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const PoseRPC& from);
-  void MergeFrom(const PoseRPC& from);
+  void CopyFrom(const MatRPC& from);
+  void MergeFrom(const MatRPC& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -456,10 +460,10 @@ class PoseRPC :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(PoseRPC* other);
+  void InternalSwap(MatRPC* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "sensorStreaming.PoseRPC";
+    return "sensorStreaming.MatRPC";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -645,7 +649,7 @@ class PoseRPC :
   void _internal_set_m44(float value);
   public:
 
-  // @@protoc_insertion_point(class_scope:sensorStreaming.PoseRPC)
+  // @@protoc_insertion_point(class_scope:sensorStreaming.MatRPC)
  private:
   class _Internal;
 
@@ -666,6 +670,174 @@ class PoseRPC :
   float m42_;
   float m43_;
   float m44_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_sensorStreaming_2eproto;
+};
+// -------------------------------------------------------------------
+
+class PoseRPC :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensorStreaming.PoseRPC) */ {
+ public:
+  PoseRPC();
+  virtual ~PoseRPC();
+
+  PoseRPC(const PoseRPC& from);
+  PoseRPC(PoseRPC&& from) noexcept
+    : PoseRPC() {
+    *this = ::std::move(from);
+  }
+
+  inline PoseRPC& operator=(const PoseRPC& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline PoseRPC& operator=(PoseRPC&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const PoseRPC& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const PoseRPC* internal_default_instance() {
+    return reinterpret_cast<const PoseRPC*>(
+               &_PoseRPC_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(PoseRPC& a, PoseRPC& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(PoseRPC* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline PoseRPC* New() const final {
+    return CreateMaybeMessage<PoseRPC>(nullptr);
+  }
+
+  PoseRPC* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<PoseRPC>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const PoseRPC& from);
+  void MergeFrom(const PoseRPC& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(PoseRPC* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensorStreaming.PoseRPC";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_sensorStreaming_2eproto);
+    return ::descriptor_table_sensorStreaming_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kCameraProjFieldNumber = 1,
+    kCameraViewFieldNumber = 2,
+    kFrameToOriginFieldNumber = 3,
+  };
+  // .sensorStreaming.MatRPC cameraProj = 1;
+  bool has_cameraproj() const;
+  private:
+  bool _internal_has_cameraproj() const;
+  public:
+  void clear_cameraproj();
+  const ::sensorStreaming::MatRPC& cameraproj() const;
+  ::sensorStreaming::MatRPC* release_cameraproj();
+  ::sensorStreaming::MatRPC* mutable_cameraproj();
+  void set_allocated_cameraproj(::sensorStreaming::MatRPC* cameraproj);
+  private:
+  const ::sensorStreaming::MatRPC& _internal_cameraproj() const;
+  ::sensorStreaming::MatRPC* _internal_mutable_cameraproj();
+  public:
+
+  // .sensorStreaming.MatRPC cameraView = 2;
+  bool has_cameraview() const;
+  private:
+  bool _internal_has_cameraview() const;
+  public:
+  void clear_cameraview();
+  const ::sensorStreaming::MatRPC& cameraview() const;
+  ::sensorStreaming::MatRPC* release_cameraview();
+  ::sensorStreaming::MatRPC* mutable_cameraview();
+  void set_allocated_cameraview(::sensorStreaming::MatRPC* cameraview);
+  private:
+  const ::sensorStreaming::MatRPC& _internal_cameraview() const;
+  ::sensorStreaming::MatRPC* _internal_mutable_cameraview();
+  public:
+
+  // .sensorStreaming.MatRPC frameToOrigin = 3;
+  bool has_frametoorigin() const;
+  private:
+  bool _internal_has_frametoorigin() const;
+  public:
+  void clear_frametoorigin();
+  const ::sensorStreaming::MatRPC& frametoorigin() const;
+  ::sensorStreaming::MatRPC* release_frametoorigin();
+  ::sensorStreaming::MatRPC* mutable_frametoorigin();
+  void set_allocated_frametoorigin(::sensorStreaming::MatRPC* frametoorigin);
+  private:
+  const ::sensorStreaming::MatRPC& _internal_frametoorigin() const;
+  ::sensorStreaming::MatRPC* _internal_mutable_frametoorigin();
+  public:
+
+  // @@protoc_insertion_point(class_scope:sensorStreaming.PoseRPC)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::sensorStreaming::MatRPC* cameraproj_;
+  ::sensorStreaming::MatRPC* cameraview_;
+  ::sensorStreaming::MatRPC* frametoorigin_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_sensorStreaming_2eproto;
 };
@@ -713,7 +885,7 @@ class ImageRPC :
                &_ImageRPC_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(ImageRPC& a, ImageRPC& b) {
     a.Swap(&b);
@@ -870,7 +1042,7 @@ class SensorFrameRPC :
                &_SensorFrameRPC_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(SensorFrameRPC& a, SensorFrameRPC& b) {
     a.Swap(&b);
@@ -1134,326 +1306,510 @@ inline void CameraIntrinsicsRPC::set_cy(float value) {
 
 // -------------------------------------------------------------------
 
-// PoseRPC
+// MatRPC
 
 // float m11 = 1;
-inline void PoseRPC::clear_m11() {
+inline void MatRPC::clear_m11() {
   m11_ = 0;
 }
-inline float PoseRPC::_internal_m11() const {
+inline float MatRPC::_internal_m11() const {
   return m11_;
 }
-inline float PoseRPC::m11() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m11)
+inline float MatRPC::m11() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m11)
   return _internal_m11();
 }
-inline void PoseRPC::_internal_set_m11(float value) {
+inline void MatRPC::_internal_set_m11(float value) {
   
   m11_ = value;
 }
-inline void PoseRPC::set_m11(float value) {
+inline void MatRPC::set_m11(float value) {
   _internal_set_m11(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m11)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m11)
 }
 
 // float m12 = 2;
-inline void PoseRPC::clear_m12() {
+inline void MatRPC::clear_m12() {
   m12_ = 0;
 }
-inline float PoseRPC::_internal_m12() const {
+inline float MatRPC::_internal_m12() const {
   return m12_;
 }
-inline float PoseRPC::m12() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m12)
+inline float MatRPC::m12() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m12)
   return _internal_m12();
 }
-inline void PoseRPC::_internal_set_m12(float value) {
+inline void MatRPC::_internal_set_m12(float value) {
   
   m12_ = value;
 }
-inline void PoseRPC::set_m12(float value) {
+inline void MatRPC::set_m12(float value) {
   _internal_set_m12(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m12)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m12)
 }
 
 // float m13 = 3;
-inline void PoseRPC::clear_m13() {
+inline void MatRPC::clear_m13() {
   m13_ = 0;
 }
-inline float PoseRPC::_internal_m13() const {
+inline float MatRPC::_internal_m13() const {
   return m13_;
 }
-inline float PoseRPC::m13() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m13)
+inline float MatRPC::m13() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m13)
   return _internal_m13();
 }
-inline void PoseRPC::_internal_set_m13(float value) {
+inline void MatRPC::_internal_set_m13(float value) {
   
   m13_ = value;
 }
-inline void PoseRPC::set_m13(float value) {
+inline void MatRPC::set_m13(float value) {
   _internal_set_m13(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m13)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m13)
 }
 
 // float m14 = 4;
-inline void PoseRPC::clear_m14() {
+inline void MatRPC::clear_m14() {
   m14_ = 0;
 }
-inline float PoseRPC::_internal_m14() const {
+inline float MatRPC::_internal_m14() const {
   return m14_;
 }
-inline float PoseRPC::m14() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m14)
+inline float MatRPC::m14() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m14)
   return _internal_m14();
 }
-inline void PoseRPC::_internal_set_m14(float value) {
+inline void MatRPC::_internal_set_m14(float value) {
   
   m14_ = value;
 }
-inline void PoseRPC::set_m14(float value) {
+inline void MatRPC::set_m14(float value) {
   _internal_set_m14(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m14)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m14)
 }
 
 // float m21 = 5;
-inline void PoseRPC::clear_m21() {
+inline void MatRPC::clear_m21() {
   m21_ = 0;
 }
-inline float PoseRPC::_internal_m21() const {
+inline float MatRPC::_internal_m21() const {
   return m21_;
 }
-inline float PoseRPC::m21() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m21)
+inline float MatRPC::m21() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m21)
   return _internal_m21();
 }
-inline void PoseRPC::_internal_set_m21(float value) {
+inline void MatRPC::_internal_set_m21(float value) {
   
   m21_ = value;
 }
-inline void PoseRPC::set_m21(float value) {
+inline void MatRPC::set_m21(float value) {
   _internal_set_m21(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m21)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m21)
 }
 
 // float m22 = 6;
-inline void PoseRPC::clear_m22() {
+inline void MatRPC::clear_m22() {
   m22_ = 0;
 }
-inline float PoseRPC::_internal_m22() const {
+inline float MatRPC::_internal_m22() const {
   return m22_;
 }
-inline float PoseRPC::m22() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m22)
+inline float MatRPC::m22() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m22)
   return _internal_m22();
 }
-inline void PoseRPC::_internal_set_m22(float value) {
+inline void MatRPC::_internal_set_m22(float value) {
   
   m22_ = value;
 }
-inline void PoseRPC::set_m22(float value) {
+inline void MatRPC::set_m22(float value) {
   _internal_set_m22(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m22)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m22)
 }
 
 // float m23 = 7;
-inline void PoseRPC::clear_m23() {
+inline void MatRPC::clear_m23() {
   m23_ = 0;
 }
-inline float PoseRPC::_internal_m23() const {
+inline float MatRPC::_internal_m23() const {
   return m23_;
 }
-inline float PoseRPC::m23() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m23)
+inline float MatRPC::m23() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m23)
   return _internal_m23();
 }
-inline void PoseRPC::_internal_set_m23(float value) {
+inline void MatRPC::_internal_set_m23(float value) {
   
   m23_ = value;
 }
-inline void PoseRPC::set_m23(float value) {
+inline void MatRPC::set_m23(float value) {
   _internal_set_m23(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m23)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m23)
 }
 
 // float m24 = 8;
-inline void PoseRPC::clear_m24() {
+inline void MatRPC::clear_m24() {
   m24_ = 0;
 }
-inline float PoseRPC::_internal_m24() const {
+inline float MatRPC::_internal_m24() const {
   return m24_;
 }
-inline float PoseRPC::m24() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m24)
+inline float MatRPC::m24() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m24)
   return _internal_m24();
 }
-inline void PoseRPC::_internal_set_m24(float value) {
+inline void MatRPC::_internal_set_m24(float value) {
   
   m24_ = value;
 }
-inline void PoseRPC::set_m24(float value) {
+inline void MatRPC::set_m24(float value) {
   _internal_set_m24(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m24)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m24)
 }
 
 // float m31 = 9;
-inline void PoseRPC::clear_m31() {
+inline void MatRPC::clear_m31() {
   m31_ = 0;
 }
-inline float PoseRPC::_internal_m31() const {
+inline float MatRPC::_internal_m31() const {
   return m31_;
 }
-inline float PoseRPC::m31() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m31)
+inline float MatRPC::m31() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m31)
   return _internal_m31();
 }
-inline void PoseRPC::_internal_set_m31(float value) {
+inline void MatRPC::_internal_set_m31(float value) {
   
   m31_ = value;
 }
-inline void PoseRPC::set_m31(float value) {
+inline void MatRPC::set_m31(float value) {
   _internal_set_m31(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m31)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m31)
 }
 
 // float m32 = 10;
-inline void PoseRPC::clear_m32() {
+inline void MatRPC::clear_m32() {
   m32_ = 0;
 }
-inline float PoseRPC::_internal_m32() const {
+inline float MatRPC::_internal_m32() const {
   return m32_;
 }
-inline float PoseRPC::m32() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m32)
+inline float MatRPC::m32() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m32)
   return _internal_m32();
 }
-inline void PoseRPC::_internal_set_m32(float value) {
+inline void MatRPC::_internal_set_m32(float value) {
   
   m32_ = value;
 }
-inline void PoseRPC::set_m32(float value) {
+inline void MatRPC::set_m32(float value) {
   _internal_set_m32(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m32)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m32)
 }
 
 // float m33 = 11;
-inline void PoseRPC::clear_m33() {
+inline void MatRPC::clear_m33() {
   m33_ = 0;
 }
-inline float PoseRPC::_internal_m33() const {
+inline float MatRPC::_internal_m33() const {
   return m33_;
 }
-inline float PoseRPC::m33() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m33)
+inline float MatRPC::m33() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m33)
   return _internal_m33();
 }
-inline void PoseRPC::_internal_set_m33(float value) {
+inline void MatRPC::_internal_set_m33(float value) {
   
   m33_ = value;
 }
-inline void PoseRPC::set_m33(float value) {
+inline void MatRPC::set_m33(float value) {
   _internal_set_m33(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m33)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m33)
 }
 
 // float m34 = 12;
-inline void PoseRPC::clear_m34() {
+inline void MatRPC::clear_m34() {
   m34_ = 0;
 }
-inline float PoseRPC::_internal_m34() const {
+inline float MatRPC::_internal_m34() const {
   return m34_;
 }
-inline float PoseRPC::m34() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m34)
+inline float MatRPC::m34() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m34)
   return _internal_m34();
 }
-inline void PoseRPC::_internal_set_m34(float value) {
+inline void MatRPC::_internal_set_m34(float value) {
   
   m34_ = value;
 }
-inline void PoseRPC::set_m34(float value) {
+inline void MatRPC::set_m34(float value) {
   _internal_set_m34(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m34)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m34)
 }
 
 // float m41 = 13;
-inline void PoseRPC::clear_m41() {
+inline void MatRPC::clear_m41() {
   m41_ = 0;
 }
-inline float PoseRPC::_internal_m41() const {
+inline float MatRPC::_internal_m41() const {
   return m41_;
 }
-inline float PoseRPC::m41() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m41)
+inline float MatRPC::m41() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m41)
   return _internal_m41();
 }
-inline void PoseRPC::_internal_set_m41(float value) {
+inline void MatRPC::_internal_set_m41(float value) {
   
   m41_ = value;
 }
-inline void PoseRPC::set_m41(float value) {
+inline void MatRPC::set_m41(float value) {
   _internal_set_m41(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m41)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m41)
 }
 
 // float m42 = 14;
-inline void PoseRPC::clear_m42() {
+inline void MatRPC::clear_m42() {
   m42_ = 0;
 }
-inline float PoseRPC::_internal_m42() const {
+inline float MatRPC::_internal_m42() const {
   return m42_;
 }
-inline float PoseRPC::m42() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m42)
+inline float MatRPC::m42() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m42)
   return _internal_m42();
 }
-inline void PoseRPC::_internal_set_m42(float value) {
+inline void MatRPC::_internal_set_m42(float value) {
   
   m42_ = value;
 }
-inline void PoseRPC::set_m42(float value) {
+inline void MatRPC::set_m42(float value) {
   _internal_set_m42(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m42)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m42)
 }
 
 // float m43 = 15;
-inline void PoseRPC::clear_m43() {
+inline void MatRPC::clear_m43() {
   m43_ = 0;
 }
-inline float PoseRPC::_internal_m43() const {
+inline float MatRPC::_internal_m43() const {
   return m43_;
 }
-inline float PoseRPC::m43() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m43)
+inline float MatRPC::m43() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m43)
   return _internal_m43();
 }
-inline void PoseRPC::_internal_set_m43(float value) {
+inline void MatRPC::_internal_set_m43(float value) {
   
   m43_ = value;
 }
-inline void PoseRPC::set_m43(float value) {
+inline void MatRPC::set_m43(float value) {
   _internal_set_m43(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m43)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m43)
 }
 
 // float m44 = 16;
-inline void PoseRPC::clear_m44() {
+inline void MatRPC::clear_m44() {
   m44_ = 0;
 }
-inline float PoseRPC::_internal_m44() const {
+inline float MatRPC::_internal_m44() const {
   return m44_;
 }
-inline float PoseRPC::m44() const {
-  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.m44)
+inline float MatRPC::m44() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.MatRPC.m44)
   return _internal_m44();
 }
-inline void PoseRPC::_internal_set_m44(float value) {
+inline void MatRPC::_internal_set_m44(float value) {
   
   m44_ = value;
 }
-inline void PoseRPC::set_m44(float value) {
+inline void MatRPC::set_m44(float value) {
   _internal_set_m44(value);
-  // @@protoc_insertion_point(field_set:sensorStreaming.PoseRPC.m44)
+  // @@protoc_insertion_point(field_set:sensorStreaming.MatRPC.m44)
+}
+
+// -------------------------------------------------------------------
+
+// PoseRPC
+
+// .sensorStreaming.MatRPC cameraProj = 1;
+inline bool PoseRPC::_internal_has_cameraproj() const {
+  return this != internal_default_instance() && cameraproj_ != nullptr;
+}
+inline bool PoseRPC::has_cameraproj() const {
+  return _internal_has_cameraproj();
+}
+inline void PoseRPC::clear_cameraproj() {
+  if (GetArenaNoVirtual() == nullptr && cameraproj_ != nullptr) {
+    delete cameraproj_;
+  }
+  cameraproj_ = nullptr;
+}
+inline const ::sensorStreaming::MatRPC& PoseRPC::_internal_cameraproj() const {
+  const ::sensorStreaming::MatRPC* p = cameraproj_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::sensorStreaming::MatRPC*>(
+      &::sensorStreaming::_MatRPC_default_instance_);
+}
+inline const ::sensorStreaming::MatRPC& PoseRPC::cameraproj() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.cameraProj)
+  return _internal_cameraproj();
+}
+inline ::sensorStreaming::MatRPC* PoseRPC::release_cameraproj() {
+  // @@protoc_insertion_point(field_release:sensorStreaming.PoseRPC.cameraProj)
+  
+  ::sensorStreaming::MatRPC* temp = cameraproj_;
+  cameraproj_ = nullptr;
+  return temp;
+}
+inline ::sensorStreaming::MatRPC* PoseRPC::_internal_mutable_cameraproj() {
+  
+  if (cameraproj_ == nullptr) {
+    auto* p = CreateMaybeMessage<::sensorStreaming::MatRPC>(GetArenaNoVirtual());
+    cameraproj_ = p;
+  }
+  return cameraproj_;
+}
+inline ::sensorStreaming::MatRPC* PoseRPC::mutable_cameraproj() {
+  // @@protoc_insertion_point(field_mutable:sensorStreaming.PoseRPC.cameraProj)
+  return _internal_mutable_cameraproj();
+}
+inline void PoseRPC::set_allocated_cameraproj(::sensorStreaming::MatRPC* cameraproj) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete cameraproj_;
+  }
+  if (cameraproj) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      cameraproj = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, cameraproj, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  cameraproj_ = cameraproj;
+  // @@protoc_insertion_point(field_set_allocated:sensorStreaming.PoseRPC.cameraProj)
+}
+
+// .sensorStreaming.MatRPC cameraView = 2;
+inline bool PoseRPC::_internal_has_cameraview() const {
+  return this != internal_default_instance() && cameraview_ != nullptr;
+}
+inline bool PoseRPC::has_cameraview() const {
+  return _internal_has_cameraview();
+}
+inline void PoseRPC::clear_cameraview() {
+  if (GetArenaNoVirtual() == nullptr && cameraview_ != nullptr) {
+    delete cameraview_;
+  }
+  cameraview_ = nullptr;
+}
+inline const ::sensorStreaming::MatRPC& PoseRPC::_internal_cameraview() const {
+  const ::sensorStreaming::MatRPC* p = cameraview_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::sensorStreaming::MatRPC*>(
+      &::sensorStreaming::_MatRPC_default_instance_);
+}
+inline const ::sensorStreaming::MatRPC& PoseRPC::cameraview() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.cameraView)
+  return _internal_cameraview();
+}
+inline ::sensorStreaming::MatRPC* PoseRPC::release_cameraview() {
+  // @@protoc_insertion_point(field_release:sensorStreaming.PoseRPC.cameraView)
+  
+  ::sensorStreaming::MatRPC* temp = cameraview_;
+  cameraview_ = nullptr;
+  return temp;
+}
+inline ::sensorStreaming::MatRPC* PoseRPC::_internal_mutable_cameraview() {
+  
+  if (cameraview_ == nullptr) {
+    auto* p = CreateMaybeMessage<::sensorStreaming::MatRPC>(GetArenaNoVirtual());
+    cameraview_ = p;
+  }
+  return cameraview_;
+}
+inline ::sensorStreaming::MatRPC* PoseRPC::mutable_cameraview() {
+  // @@protoc_insertion_point(field_mutable:sensorStreaming.PoseRPC.cameraView)
+  return _internal_mutable_cameraview();
+}
+inline void PoseRPC::set_allocated_cameraview(::sensorStreaming::MatRPC* cameraview) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete cameraview_;
+  }
+  if (cameraview) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      cameraview = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, cameraview, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  cameraview_ = cameraview;
+  // @@protoc_insertion_point(field_set_allocated:sensorStreaming.PoseRPC.cameraView)
+}
+
+// .sensorStreaming.MatRPC frameToOrigin = 3;
+inline bool PoseRPC::_internal_has_frametoorigin() const {
+  return this != internal_default_instance() && frametoorigin_ != nullptr;
+}
+inline bool PoseRPC::has_frametoorigin() const {
+  return _internal_has_frametoorigin();
+}
+inline void PoseRPC::clear_frametoorigin() {
+  if (GetArenaNoVirtual() == nullptr && frametoorigin_ != nullptr) {
+    delete frametoorigin_;
+  }
+  frametoorigin_ = nullptr;
+}
+inline const ::sensorStreaming::MatRPC& PoseRPC::_internal_frametoorigin() const {
+  const ::sensorStreaming::MatRPC* p = frametoorigin_;
+  return p != nullptr ? *p : *reinterpret_cast<const ::sensorStreaming::MatRPC*>(
+      &::sensorStreaming::_MatRPC_default_instance_);
+}
+inline const ::sensorStreaming::MatRPC& PoseRPC::frametoorigin() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.PoseRPC.frameToOrigin)
+  return _internal_frametoorigin();
+}
+inline ::sensorStreaming::MatRPC* PoseRPC::release_frametoorigin() {
+  // @@protoc_insertion_point(field_release:sensorStreaming.PoseRPC.frameToOrigin)
+  
+  ::sensorStreaming::MatRPC* temp = frametoorigin_;
+  frametoorigin_ = nullptr;
+  return temp;
+}
+inline ::sensorStreaming::MatRPC* PoseRPC::_internal_mutable_frametoorigin() {
+  
+  if (frametoorigin_ == nullptr) {
+    auto* p = CreateMaybeMessage<::sensorStreaming::MatRPC>(GetArenaNoVirtual());
+    frametoorigin_ = p;
+  }
+  return frametoorigin_;
+}
+inline ::sensorStreaming::MatRPC* PoseRPC::mutable_frametoorigin() {
+  // @@protoc_insertion_point(field_mutable:sensorStreaming.PoseRPC.frameToOrigin)
+  return _internal_mutable_frametoorigin();
+}
+inline void PoseRPC::set_allocated_frametoorigin(::sensorStreaming::MatRPC* frametoorigin) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete frametoorigin_;
+  }
+  if (frametoorigin) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      frametoorigin = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, frametoorigin, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  frametoorigin_ = frametoorigin;
+  // @@protoc_insertion_point(field_set_allocated:sensorStreaming.PoseRPC.frameToOrigin)
 }
 
 // -------------------------------------------------------------------
@@ -1687,6 +2043,8 @@ inline void SensorFrameRPC::set_allocated_pose(::sensorStreaming::PoseRPC* pose)
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
