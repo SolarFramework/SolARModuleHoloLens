@@ -33,7 +33,7 @@
 // ADD HERE: Component interfaces header. e.g. #include "api/input/devices/ICamera.h"
 #include "api/input/devices/IBuiltInSLAM.h"
 #include "api/display/IImageViewer.h"
-
+#include "api/display/I3DOverlay.h"
 
 // Namespaces
 using namespace SolAR;
@@ -65,13 +65,15 @@ int main(int argc, char *argv[])
 		// e.g. SRef<image::ICamera> camera = xpcfComponentManager->resolve<image::ICamera>();
 		SRef<input::devices::IBuiltInSLAM> slamHoloLens = xpcfComponentManager->resolve<input::devices::IBuiltInSLAM>();
 		SRef<display::IImageViewer> imageViewer = xpcfComponentManager->resolve<display::IImageViewer>();
+        SRef<display::I3DOverlay> overlay3D = xpcfComponentManager->resolve<display::I3DOverlay>();
 
 	// ADD HERE: Declare here the data structures used to connect components
 		std::string camera_name = "vlc_lf";
-		CameraParameters camIntrinsics;
+		CameraParameters camParams;
 
-		std::vector<Image> frames;
-		std::vector<PoseMatrix> poses;
+		SRef<Image> frame;
+		PoseMatrix pose;
+		Transform3Df a;
 
 		// Buffers
 		xpcf::DropBuffer<std::pair<SRef<Image>, PoseMatrix>>	m_dropBufferSensorCapture;
@@ -83,16 +85,54 @@ int main(int argc, char *argv[])
         int count = 0;
 
 	// ADD HERE: The pipeline initialization
+
 		// Connect remotely to the HoloLens streaming app
 		slamHoloLens->start();
-	
 		// Retrieve camera intrinsics parameters
-		slamHoloLens->getIntrinsics(camera_name, camIntrinsics);
+		slamHoloLens->getIntrinsics(camera_name, camParams);
+		// Note: Camera distortion is assumed to be ideal coming from HoloLens sensors (undistortion is already performed internally)
+		overlay3D->setCameraParameters(camParams.intrinsic, camParams.distorsion);
 
 		// Capture task
 		auto fnCapture = [&]()
 		{
+			// TODO
+			//Init sensor capture
+			if (slamHoloLens->RequestCapture(camera_name) == FrameworkReturnCode::_ERROR_)
+				return;
 
+			// Read and update loop
+			FrameworkReturnCode status = slamHoloLens->ReadCapture(frame, pose);
+			if (status == FrameworkReturnCode::_ERROR_)
+			{
+				return;
+			}
+			else if (status == FrameworkReturnCode::_SUCCESS)
+			{
+				std::pair<SRef<Image>, PoseMatrix> framePose;
+				framePose = std::make_pair(frame, pose);
+				m_dropBufferSensorCapture.push(framePose);
+			}
+			else if (status == FrameworkReturnCode::_STOP)
+			{
+				return;
+			}
+		};
+
+		// Process (draw pose on image)
+		auto fnProcess = [&]()
+		{
+			std::pair<SRef<Image>, PoseMatrix> sensorFrame;
+			if (!m_dropBufferSensorCapture.tryPop(sensorFrame))
+			{
+				xpcf::DelegateTask::yield();
+				return;
+			}
+			SRef<Image> frame = sensorFrame.first;
+			PoseMatrix pose = sensorFrame.second;
+            // TO FIX
+            // overlay3D->draw(pose, frame);
+			m_dropBufferDisplay.push(frame);
 		};
 
 		// Display task
@@ -112,8 +152,10 @@ int main(int argc, char *argv[])
 
 		// Instantiate and start tasks
 		xpcf::DelegateTask taskDisplay(fnDisplay);
+		xpcf::DelegateTask taskProcess(fnProcess);
 
 		taskDisplay.start();
+		taskProcess.start();
 
 	// ADD HERE: The pipeline processing
 		start = clock();
@@ -122,6 +164,9 @@ int main(int argc, char *argv[])
 			// GetCapture
 			fnCapture();
 		}
+		// End tasks
+		taskProcess.start();
+
 		end = clock();
 		// Display stats on frame rate
 		double duration = double(end - start) / CLOCKS_PER_SEC;
