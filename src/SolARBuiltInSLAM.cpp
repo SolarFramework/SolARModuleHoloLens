@@ -2,21 +2,6 @@
 
 #include <core/Log.h>
 
-#include "grpc/grpc.h"
-#include <grpcpp/channel.h>
-#include <grpcpp/client_context.h>
-#include <grpcpp/create_channel.h>
-#include <grpcpp/security/credentials.h>
-
-// From gRPC proto file
-using sensorStreaming::Streamer;
-using sensorStreaming::NameRPC;
-using sensorStreaming::CameraIntrinsicsRPC;
-using sensorStreaming::PoseRPC;
-using sensorStreaming::MatRPC;
-using sensorStreaming::ImageRPC;
-using sensorStreaming::SensorFrameRPC;
-
 namespace xpcf = org::bcom::xpcf;
 
 XPCF_DEFINE_FACTORY_CREATE_INSTANCE(SolAR::MODULES::HOLOLENS::SolARBuiltInSLAM)
@@ -55,10 +40,12 @@ CamCalibration ParseCameraIntrinsicsRPC(CameraIntrinsicsRPC camIntrinsics)
 	return intrinsics;
 }
 
-Image ParseImageRPC(ImageRPC imageRPC)
+SRef<Image> ParseImageRPC(ImageRPC imageRPC)
 {
-	Image img(imageRPC.width(), imageRPC.height(), Image::ImageLayout::LAYOUT_RGB, Image::PixelOrder::INTERLEAVED, Image::DataType::TYPE_8U);
-	return img;
+	SRef<Image> imgDest;
+	// TODO
+	//img(imageRPC.width(), imageRPC.height(), Image::ImageLayout::LAYOUT_RGB, Image::PixelOrder::INTERLEAVED, Image::DataType::TYPE_8U);
+	return imgDest;
 }
 
 PoseMatrix ParseMatRPC(MatRPC matRPC)
@@ -131,6 +118,9 @@ xpcf::XPCFErrorCode SolARBuiltInSLAM::onConfigured()
 
 FrameworkReturnCode SolARBuiltInSLAM::start()
 {
+	if (m_isClientConnected)
+		LOG_ERROR("Can't connect to device, client already connected!")
+		return FrameworkReturnCode::_ERROR_;
 	// Initializing stub with connection channel to the device
 	std::unique_ptr<Streamer::Stub> m_stub(Streamer::NewStub(grpc::CreateChannel(m_deviceAddress, grpc::InsecureChannelCredentials())));
     // TODO upgrade to encrypted authentication to device //
@@ -145,24 +135,32 @@ FrameworkReturnCode SolARBuiltInSLAM::start()
 
 FrameworkReturnCode SolARBuiltInSLAM::stop()
 {
-	// TODO Cleanup
+	if (m_stub != nullptr)
+	{
+		m_stub = nullptr;
+	}
 	return FrameworkReturnCode::_SUCCESS;
 }
 
-FrameworkReturnCode SolARBuiltInSLAM::getLastCapture(std::vector<Image> & frames, std::vector<PoseMatrix> & poses)
+/// Obsolete
+FrameworkReturnCode SolARBuiltInSLAM::getLastCapture(std::vector<SRef<Image>> & frames, std::vector<PoseMatrix> & poses)
 {
-	// One call should be enough to get a constant stream of data (?)
+	if (!m_isClientConnected)
+	{
+		LOG_ERROR("Client not connected, can't satisfy request");
+		return FrameworkReturnCode::_ERROR_;
+	}
+
 	SensorFrameRPC sensorFrame;
-	grpc::ClientContext context;
 	std::unique_ptr<grpc::ClientReader<SensorFrameRPC>> reader(
-		m_stub->SensorStream(&context, MakeNameRPC("vlc_lf"))
+		m_stub->SensorStream(&m_context, MakeNameRPC("vlc_lf"))
 	);
 	// Read stream buffer
 	while (reader->Read(&sensorFrame))
 	{
 		if (sensorFrame.has_image())
 		{
-			Image img = ParseImageRPC(sensorFrame.image());
+			SRef<Image> img = ParseImageRPC(sensorFrame.image());
             frames.emplace_back(img);
 		}
 		if (sensorFrame.has_pose())
@@ -180,17 +178,71 @@ FrameworkReturnCode SolARBuiltInSLAM::getLastCapture(std::vector<Image> & frames
 	return FrameworkReturnCode::_SUCCESS;
 }
 
-CameraParameters & SolARBuiltInSLAM::getIntrinsics(const std::string & camera_name)
+FrameworkReturnCode SolARBuiltInSLAM::RequestCapture(const std::string & camera_name)
 {
-	grpc::ClientContext context;
+	if (!m_isClientConnected)
+	{
+		LOG_ERROR("Client not connected, can't satisfy request");
+		return FrameworkReturnCode::_ERROR_;
+	}
+	m_reader = m_stub->SensorStream(&m_context, MakeNameRPC(camera_name));
+	return FrameworkReturnCode::_SUCCESS;
+}
+
+FrameworkReturnCode SolARBuiltInSLAM::ReadCapture(SRef<Image> & frame, PoseMatrix & pose)
+{
+	if (!m_isClientConnected)
+	{
+		LOG_ERROR("Client not connected, can't satisfy request");
+		return FrameworkReturnCode::_ERROR_;
+	}
+
+	if (m_reader == nullptr)
+	{
+		LOG_ERROR("No reader available, did you request a capture?");
+		return FrameworkReturnCode::_ERROR_;
+	}
+
+	SensorFrameRPC sensorFrame;
+	if (!m_reader->Read(&sensorFrame))
+	{
+		grpc::Status status = m_reader->Finish();
+		if (!status.ok())
+		{
+			LOG_ERROR("Request terminated abrubtly");
+			return FrameworkReturnCode::_ERROR_;
+		}
+		LOG_DEBUG("Reader is empty, end of the stream");
+		return FrameworkReturnCode::_STOP;
+	}
+
+	// Reader as new data that we can process
+	if (sensorFrame.has_image())
+	{
+		frame = ParseImageRPC(sensorFrame.image());
+	}
+	if (sensorFrame.has_pose())
+	{
+		pose = ParsePoseRPC(sensorFrame.pose());
+	}
+	return FrameworkReturnCode::_SUCCESS;
+}
+
+FrameworkReturnCode SolARBuiltInSLAM::getIntrinsics(const std::string & camera_name, CameraParameters & camParams)
+{
+	if (!m_isClientConnected)
+	{
+		LOG_ERROR("Client not connected, can't satisfy request");
+		return FrameworkReturnCode::_ERROR_;
+	}
+
 	CameraIntrinsicsRPC camParamsRPC;
-	CameraParameters camParams;
-	grpc::Status status = m_stub->GetCamIntrinsics(&context, MakeNameRPC(camera_name), &camParamsRPC);
+	grpc::Status status = m_stub->GetCamIntrinsics(&m_context, MakeNameRPC(camera_name), &camParamsRPC);
 	if (status.ok())
 	{
 		camParams.intrinsic = ParseCameraIntrinsicsRPC(camParamsRPC);
 	}
-	return camParams;
+	return FrameworkReturnCode::_SUCCESS;
 }
 
 }
