@@ -53,27 +53,35 @@ int main(int argc, char *argv[])
 
 	try
 	{
+        LOG_INFO("Load config...");
 	// Instantiate component manager and load the pipeline configuration file
 		SRef<xpcf::IComponentManager> xpcfComponentManager = xpcf::getComponentManagerInstance();
 		if(xpcfComponentManager->load("conf_Sample-HoloLens.xml")!=org::bcom::xpcf::_SUCCESS)
 		{
-			LOG_ERROR("Failed to load the configuration file conf_Sample-HoloLens.xml")
+			LOG_ERROR("Failed to load the configuration file conf_Sample-HoloLens.xml");
 			return -1;
 		}
+        LOG_INFO("Config loaded!");
+        LOG_INFO("Start creating components");
 
 	// ADD HERE: instantiate concrete components and bind them to abstract component interfaces
 		// e.g. SRef<image::ICamera> camera = xpcfComponentManager->resolve<image::ICamera>();
-		SRef<input::devices::IBuiltInSLAM> slamHoloLens = xpcfComponentManager->resolve<input::devices::IBuiltInSLAM>();
-		SRef<display::IImageViewer> imageViewer = xpcfComponentManager->resolve<display::IImageViewer>();
-        SRef<display::I3DOverlay> overlay3D = xpcfComponentManager->resolve<display::I3DOverlay>();
+		//SRef<input::devices::IBuiltInSLAM> slamHoloLens;
+		auto slamHoloLens = xpcfComponentManager->resolve<input::devices::IBuiltInSLAM>();
+        auto imageViewer = xpcfComponentManager->resolve<display::IImageViewer>();
+		auto overlay3D = xpcfComponentManager->resolve<display::I3DOverlay>();
 
+        LOG_INFO("Components created!");
 	// ADD HERE: Declare here the data structures used to connect components
 		std::string camera_name = "vlc_lf";
 		CameraParameters camParams;
 
 		SRef<Image> frame;
 		PoseMatrix pose;
+        std::pair<SRef<Image>, PoseMatrix> framePose;
 		Transform3Df a;
+
+		bool hasStartedCapture = false;
 
 		// Buffers
 		xpcf::DropBuffer<std::pair<SRef<Image>, PoseMatrix>>	m_dropBufferSensorCapture;
@@ -85,38 +93,60 @@ int main(int argc, char *argv[])
         int count = 0;
 
 	// ADD HERE: The pipeline initialization
-
+		LOG_INFO("Starting connection");
 		// Connect remotely to the HoloLens streaming app
-		slamHoloLens->start();
+		if (slamHoloLens->start() == FrameworkReturnCode::_ERROR_)
+		{
+			LOG_ERROR("Can't connect to HoloLens");
+			return -1;
+		}
+		LOG_INFO("Connection started!");
 		// Retrieve camera intrinsics parameters
-		slamHoloLens->getIntrinsics(camera_name, camParams);
+		if (slamHoloLens->getIntrinsics(camera_name, camParams) == FrameworkReturnCode::_ERROR_)
+		{
+			LOG_ERROR("request failed");
+			return -1;
+		}
+		else
+			LOG_INFO("got intrinsics \n{}", camParams.intrinsic);
 		// Note: Camera distortion is assumed to be ideal coming from HoloLens sensors (undistortion is already performed internally)
-		overlay3D->setCameraParameters(camParams.intrinsic, camParams.distorsion);
+		//overlay3D->setCameraParameters(camParams.intrinsic, camParams.distorsion);
 
 		// Capture task
 		auto fnCapture = [&]()
 		{
-			// TODO
 			//Init sensor capture
-			if (slamHoloLens->RequestCapture(camera_name) == FrameworkReturnCode::_ERROR_)
-				return;
-
+			if (!hasStartedCapture)
+			{
+				LOG_INFO("Requesting stream capture for camera {}", camera_name);
+				if (slamHoloLens->RequestCapture(camera_name) == FrameworkReturnCode::_ERROR_)
+				{
+					LOG_ERROR("Error requesting capture");
+					return -1;
+				}
+				hasStartedCapture = true;
+				LOG_DEBUG("Start streaming...");
+			}
 			// Read and update loop
 			FrameworkReturnCode status = slamHoloLens->ReadCapture(frame, pose);
-			if (status == FrameworkReturnCode::_ERROR_)
+			LOG_DEBUG("Read capture done");
+			switch (status)
 			{
-				return;
-			}
-			else if (status == FrameworkReturnCode::_SUCCESS)
-			{
-				std::pair<SRef<Image>, PoseMatrix> framePose;
+			case FrameworkReturnCode::_ERROR_:
+				LOG_ERROR("Error during capture");
+				stop = true;
+				break;
+			case FrameworkReturnCode::_SUCCESS:
 				framePose = std::make_pair(frame, pose);
+				LOG_DEBUG("\n{}", pose);
 				m_dropBufferSensorCapture.push(framePose);
+				break;
+			case FrameworkReturnCode::_STOP:
+				LOG_ERROR("End of capture");
+				stop = true;
+				break;
 			}
-			else if (status == FrameworkReturnCode::_STOP)
-			{
-				return;
-			}
+			count++;
 		};
 
 		// Process (draw pose on image)
@@ -144,10 +174,10 @@ int main(int argc, char *argv[])
 				xpcf::DelegateTask::yield();
 				return;
 			}
-			if (imageViewer->display(view) == SolAR::FrameworkReturnCode::_STOP)
-			{
-				stop = true;
-			}
+			//if (imageViewer->display(view) == SolAR::FrameworkReturnCode::_STOP)
+			//{
+			//	stop = true;
+			//}
 		};
 
 		// Instantiate and start tasks
@@ -165,7 +195,8 @@ int main(int argc, char *argv[])
 			fnCapture();
 		}
 		// End tasks
-		taskProcess.start();
+		taskDisplay.stop();
+		taskProcess.stop();
 
 		end = clock();
 		// Display stats on frame rate
@@ -175,7 +206,7 @@ int main(int argc, char *argv[])
 	}
 	catch (xpcf::Exception &e)
 	{
-		LOG_DEBUG("{}", e.what());
+        LOG_ERROR("{}", e.what());
 		return -1;
 	}
 
