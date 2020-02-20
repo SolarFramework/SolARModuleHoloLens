@@ -52,20 +52,20 @@ PoseMatrix ParseMatRPC(MatRPC matRPC)
 {
 	PoseMatrix mat;
 	mat(0, 0) = matRPC.m11();
-	mat(0, 1) = matRPC.m12();
-	mat(0, 2) = matRPC.m13();
-	mat(0, 3) = matRPC.m14();
-	mat(1, 0) = matRPC.m21();
+	mat(0, 1) = matRPC.m21();
+	mat(0, 2) = matRPC.m31();
+	mat(0, 3) = matRPC.m41();
+	mat(1, 0) = matRPC.m12();
 	mat(1, 1) = matRPC.m22();
-	mat(1, 2) = matRPC.m23();
-	mat(1, 3) = matRPC.m24();
-	mat(2, 0) = matRPC.m31();
-	mat(2, 1) = matRPC.m32();
+	mat(1, 2) = matRPC.m32();
+	mat(1, 3) = matRPC.m42();
+	mat(2, 0) = matRPC.m13();
+	mat(2, 1) = matRPC.m23();
 	mat(2, 2) = matRPC.m33();
-	mat(2, 3) = matRPC.m34();
-	mat(3, 0) = matRPC.m41();
-	mat(3, 1) = matRPC.m42();
-	mat(3, 2) = matRPC.m43();
+	mat(2, 3) = matRPC.m43();
+	mat(3, 0) = matRPC.m14();
+	mat(3, 1) = matRPC.m24();
+	mat(3, 2) = matRPC.m34();
 	mat(3, 3) = matRPC.m44();
 
 	return mat;
