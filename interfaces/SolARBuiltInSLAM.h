@@ -82,14 +82,25 @@ public:
 	bool isProxy() override { return m_isProxy == 1; };
 
 private:
+	struct ClientCall
+	{
+		SensorFrameRPC sensorFrame;
+		std::unique_ptr<grpc::ClientReader<SensorFrameRPC>> reader;
+		grpc::ClientContext context;
+		grpc::Status status;
+	};
+
 	std::string m_deviceAddress;
 	int m_isProxy;
+	std::shared_ptr<grpc::Channel> m_channel;
 	std::unique_ptr<Streamer::Stub> m_stub;
 	grpc::ClientContext m_context;
+	ClientCall* m_capture;
 	std::unique_ptr<grpc::ClientReader<SensorFrameRPC>> m_reader;
 	bool m_isClientConnected;
 
 	std::vector<std::string> m_sensorList;
+
 };
 
 }
