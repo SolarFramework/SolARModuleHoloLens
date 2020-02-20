@@ -42,6 +42,20 @@ using namespace SolAR::api;
 
 namespace xpcf = org::bcom::xpcf;
 
+Transform3Df fromPoseMatrix(PoseMatrix mat)
+{
+	Transform3Df t;
+	for (int i; i < 4; i++)
+	{
+		for (int j; j < 4; j++)
+		{
+			t(i, j) = mat(i, j);
+		}
+	}
+
+	return t;
+}
+
 // Main function
 int main(int argc, char *argv[])
 {
@@ -77,9 +91,9 @@ int main(int argc, char *argv[])
 		CameraParameters camParams;
 
 		SRef<Image> frame;
-		PoseMatrix pose;
+		PoseMatrix poseMat;
         std::pair<SRef<Image>, PoseMatrix> framePose;
-		Transform3Df a;
+		Transform3Df pose;
 
 		bool hasStartedCapture = false;
 
@@ -128,7 +142,7 @@ int main(int argc, char *argv[])
 				LOG_DEBUG("Start streaming...");
 			}
 			// Read and update loop
-			FrameworkReturnCode status = slamHoloLens->ReadCapture(frame, pose);
+			FrameworkReturnCode status = slamHoloLens->ReadCapture(frame, poseMat);
 			LOG_DEBUG("Read capture done");
 			switch (status)
 			{
@@ -137,8 +151,8 @@ int main(int argc, char *argv[])
 				stop = true;
 				break;
 			case FrameworkReturnCode::_SUCCESS:
-				framePose = std::make_pair(frame, pose);
-				LOG_DEBUG("\n{}", pose);
+				framePose = std::make_pair(frame, poseMat);
+				LOG_DEBUG("\n{}", poseMat);
 				m_dropBufferSensorCapture.push(framePose);
 				break;
 			case FrameworkReturnCode::_STOP:
@@ -159,7 +173,9 @@ int main(int argc, char *argv[])
 				return;
 			}
 			SRef<Image> frame = sensorFrame.first;
-			PoseMatrix pose = sensorFrame.second;
+			PoseMatrix poseMat = sensorFrame.second;
+
+			pose = fromPoseMatrix(poseMat);
             // TO FIX
             // overlay3D->draw(pose, frame);
 			m_dropBufferDisplay.push(frame);
@@ -174,10 +190,10 @@ int main(int argc, char *argv[])
 				xpcf::DelegateTask::yield();
 				return;
 			}
-			//if (imageViewer->display(view) == SolAR::FrameworkReturnCode::_STOP)
-			//{
-			//	stop = true;
-			//}
+			if (imageViewer->display(view) == SolAR::FrameworkReturnCode::_STOP)
+			{
+				stop = true;
+			}
 		};
 
 		// Instantiate and start tasks
