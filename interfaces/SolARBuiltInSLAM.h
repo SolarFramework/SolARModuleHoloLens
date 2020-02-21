@@ -90,7 +90,10 @@ private:
 		grpc::Status status;
 	};
 
+	FrameworkReturnCode RequestIntrinsicsFromDevice(const std::string & camera_name, CameraParameters & camParams);
+
 	std::string m_deviceAddress;
+	std::string m_calibrationFile;
 	int m_isProxy;
 	std::shared_ptr<grpc::Channel> m_channel;
 	std::unique_ptr<Streamer::Stub> m_stub;
@@ -100,6 +103,8 @@ private:
 	bool m_isClientConnected;
 
 	std::vector<std::string> m_sensorList;
+	std::vector<CameraParameters> m_camParameters;
+
 
 };
 

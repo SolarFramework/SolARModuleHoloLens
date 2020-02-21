@@ -1,5 +1,7 @@
 #include "SolARBuiltInSLAM.h"
 
+#include <opencv2/core.hpp>
+
 #include <core/Log.h>
 
 namespace xpcf = org::bcom::xpcf;
@@ -45,7 +47,6 @@ SRef<Image> ParseImageRPC(ImageRPC imageRPC)
 	SRef<Image> imgDest;
 	uint8_t* dataPointer = (uint8_t*) imageRPC.data().c_str();
 	imgDest = xpcf::utils::make_shared<Image>(dataPointer, imageRPC.width(), imageRPC.height(), Image::ImageLayout::LAYOUT_GREY, Image::PixelOrder::INTERLEAVED, Image::DataType::TYPE_8U);
-	LOG_INFO("{}", imgDest->getSize().height);
 	return imgDest;
 }
 
@@ -78,16 +79,23 @@ PoseMatrix ParsePoseRPC(PoseRPC poseRPC)
 	PoseMatrix camView = ParseMatRPC(poseRPC.cameraview());
 	PoseMatrix frameToOrigin = ParseMatRPC(poseRPC.frametoorigin());
 
-	PoseMatrix pose;
-	// TODO check formula
-	//if (!camProj.all()) // Projection matrix is null
-	//{
-	pose = camView * frameToOrigin;
-	//}
-	//else
-	//{
-	//	pose = camProj * camView * frameToOrigin;
-	//}
+	PoseMatrix pose = PoseMatrix::Zero();
+	// cameraToImage flips Y and Z axis to comply with the output coordinate system.
+	PoseMatrix cameraToImage = PoseMatrix::Identity();
+	cameraToImage(1, 1) = -1;
+	cameraToImage(2, 2) = -1;
+
+	bool invert_ok;
+	PoseMatrix frameToOrigin_inv;
+	frameToOrigin.computeInverseWithCheck(frameToOrigin_inv, invert_ok);
+	if (invert_ok)
+	{
+		pose = cameraToImage * camView * frameToOrigin_inv;
+	}
+	else
+	{
+		LOG_WARNING("Matrix not invertible, invalid pose")
+	}
 	return pose;
 }
 
@@ -95,6 +103,7 @@ SolARBuiltInSLAM::SolARBuiltInSLAM() : ConfigurableBase(xpcf::toUUID<SolARBuiltI
 {
     addInterface<api::input::devices::IBuiltInSLAM>(this);
 	declareProperty<std::string>("deviceAddress", m_deviceAddress);
+	declareProperty<std::string>("calibrationFile", m_calibrationFile);
 	declareProperty<int>("isProxy", m_isProxy);
 }
 
@@ -106,7 +115,75 @@ SolARBuiltInSLAM::~SolARBuiltInSLAM()
 xpcf::XPCFErrorCode SolARBuiltInSLAM::onConfigured()
 {
 	m_isClientConnected = false;
-	return xpcf::XPCFErrorCode::_SUCCESS;
+	m_sensorList.emplace_back("vlc_lf");
+
+	if (m_calibrationFile.empty())
+	{
+		LOG_ERROR("Camera Calibration file path is empty");
+		return xpcf::_FAIL;
+	}
+	cv::FileStorage fs(m_calibrationFile, cv::FileStorage::READ);
+	cv::Mat intrinsic_parameters;
+	cv::Mat distortion_parameters;
+	int width, height;
+	CameraParameters camParams;
+
+	if (fs.isOpened())
+	{
+		for (auto sensor : m_sensorList)
+		{
+			auto params = fs[sensor];
+			params["image_width"] >> width;
+			params["image_height"] >> height;
+			params["camera_matrix"] >> intrinsic_parameters;
+			params["distortion_coefficients"] >> distortion_parameters;
+
+			camParams.resolution.width = width;
+			camParams.resolution.height = height;
+
+			if (intrinsic_parameters.empty())
+			{
+				LOG_ERROR("No intrinsics found in calibration file");
+					return xpcf::_FAIL;
+			}
+
+			if (intrinsic_parameters.rows == camParams.intrinsic.rows() && intrinsic_parameters.cols == camParams.intrinsic.cols())
+				for (int i = 0; i < intrinsic_parameters.rows; i++)
+					for (int j = 0; j < intrinsic_parameters.cols; j++)
+						camParams.intrinsic(i, j) = (float)intrinsic_parameters.at<double>(i, j);
+			else
+			{
+				LOG_ERROR("Camera Calibration should be a 3x3 Matrix")
+					return xpcf::_FAIL;
+			}
+
+			if (distortion_parameters.empty())
+			{
+				LOG_ERROR("No distortion parameters found in calibration file")
+					return xpcf::_FAIL;
+			}
+
+			if (distortion_parameters.rows == camParams.distorsion.rows() && distortion_parameters.cols == camParams.distorsion.cols())
+				for (int i = 0; i < distortion_parameters.rows; i++)
+					for (int j = 0; j < distortion_parameters.cols; j++)
+						camParams.distorsion(i, j) = distortion_parameters.at<double>(i, j);
+			else
+			{
+				LOG_ERROR("Camera distortion matrix should be a 5x1 Matrix")
+					return xpcf::_FAIL;
+			}
+
+			m_camParameters.emplace_back(camParams);
+		}
+		return xpcf::_SUCCESS;
+	}
+	else
+	{
+		LOG_ERROR("Cannot open camera calibration file")
+			return xpcf::_FAIL;
+	}
+
+	return xpcf::_SUCCESS;
 }
 
 FrameworkReturnCode SolARBuiltInSLAM::start()
@@ -140,7 +217,7 @@ FrameworkReturnCode SolARBuiltInSLAM::stop()
 	return FrameworkReturnCode::_SUCCESS;
 }
 
-/// Obsolete
+/// Deprecated
 FrameworkReturnCode SolARBuiltInSLAM::getLastCapture(std::vector<SRef<Image>> & frames, std::vector<PoseMatrix> & poses)
 {
 	if (!m_isClientConnected)
@@ -186,7 +263,6 @@ FrameworkReturnCode SolARBuiltInSLAM::RequestCapture(const std::string & camera_
 		return FrameworkReturnCode::_ERROR_;
 	}
 	LOG_DEBUG("Retrieving stream reader from the device...");
-	//m_reader = m_stub->SensorStream(&m_context, MakeNameRPC(camera_name));
 	
 	m_capture = new ClientCall;
 	m_capture->reader = m_stub->SensorStream(&m_capture->context, MakeNameRPC(camera_name));
@@ -230,7 +306,6 @@ FrameworkReturnCode SolARBuiltInSLAM::ReadCapture(SRef<Image> & frame, PoseMatri
 	// Reader as new data that we can process
 	if (sensorFrame.has_image())
 	{
-		LOG_INFO("has_image");
 		frame = ParseImageRPC(sensorFrame.image());
 	}
 	if (sensorFrame.has_pose())
@@ -240,7 +315,7 @@ FrameworkReturnCode SolARBuiltInSLAM::ReadCapture(SRef<Image> & frame, PoseMatri
 	return FrameworkReturnCode::_SUCCESS;
 }
 
-FrameworkReturnCode SolARBuiltInSLAM::getIntrinsics(const std::string & camera_name, CameraParameters & camParams)
+FrameworkReturnCode SolARBuiltInSLAM::RequestIntrinsicsFromDevice(const std::string & camera_name, CameraParameters & camParams)
 {
 	if (!m_isClientConnected)
 	{
@@ -257,6 +332,20 @@ FrameworkReturnCode SolARBuiltInSLAM::getIntrinsics(const std::string & camera_n
 		return FrameworkReturnCode::_SUCCESS;
 	}
 	LOG_ERROR("getIntrinsics request failed: {}", status.error_message());
+	return FrameworkReturnCode::_ERROR_;
+}
+
+FrameworkReturnCode SolARBuiltInSLAM::getIntrinsics(const std::string & camera_name, CameraParameters & camParams)
+{
+	for (int i = 0; i < m_sensorList.size(); i++)
+	{
+		if (m_sensorList[i] == camera_name)
+		{
+			camParams = m_camParameters[i];
+			return FrameworkReturnCode::_SUCCESS;
+		}
+	}
+	LOG_ERROR("Can't find intrinsics for sensor {}", camera_name);
 	return FrameworkReturnCode::_ERROR_;
 }
 
