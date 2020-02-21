@@ -43,8 +43,9 @@ CamCalibration ParseCameraIntrinsicsRPC(CameraIntrinsicsRPC camIntrinsics)
 SRef<Image> ParseImageRPC(ImageRPC imageRPC)
 {
 	SRef<Image> imgDest;
-	// TODO
-	//img(imageRPC.width(), imageRPC.height(), Image::ImageLayout::LAYOUT_RGB, Image::PixelOrder::INTERLEAVED, Image::DataType::TYPE_8U);
+	uint8_t* dataPointer = (uint8_t*) imageRPC.data().c_str();
+	imgDest = xpcf::utils::make_shared<Image>(dataPointer, imageRPC.width(), imageRPC.height(), Image::ImageLayout::LAYOUT_GREY, Image::PixelOrder::INTERLEAVED, Image::DataType::TYPE_8U);
+	LOG_INFO("{}", imgDest->getSize().height);
 	return imgDest;
 }
 
@@ -229,6 +230,7 @@ FrameworkReturnCode SolARBuiltInSLAM::ReadCapture(SRef<Image> & frame, PoseMatri
 	// Reader as new data that we can process
 	if (sensorFrame.has_image())
 	{
+		LOG_INFO("has_image");
 		frame = ParseImageRPC(sensorFrame.image());
 	}
 	if (sensorFrame.has_pose())
