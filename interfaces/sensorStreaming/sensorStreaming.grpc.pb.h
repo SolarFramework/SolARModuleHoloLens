@@ -37,6 +37,15 @@ class Streamer final {
   class StubInterface {
    public:
     virtual ~StubInterface() {}
+    // Enable sensors listed in message,
+    // returns the list of successfully enabled sensors
+    virtual ::grpc::Status EnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC& request, ::sensorStreaming::SensorListRPC* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensorStreaming::SensorListRPC>> AsyncEnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensorStreaming::SensorListRPC>>(AsyncEnableSensorsRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensorStreaming::SensorListRPC>> PrepareAsyncEnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensorStreaming::SensorListRPC>>(PrepareAsyncEnableSensorsRaw(context, request, cq));
+    }
     // Get camera intrinsics parameters from the server
     virtual ::grpc::Status GetCamIntrinsics(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC& request, ::sensorStreaming::CameraIntrinsicsRPC* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensorStreaming::CameraIntrinsicsRPC>> AsyncGetCamIntrinsics(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC& request, ::grpc::CompletionQueue* cq) {
@@ -58,6 +67,20 @@ class Streamer final {
     class experimental_async_interface {
      public:
       virtual ~experimental_async_interface() {}
+      // Enable sensors listed in message,
+      // returns the list of successfully enabled sensors
+      virtual void EnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC* request, ::sensorStreaming::SensorListRPC* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void EnableSensors(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sensorStreaming::SensorListRPC* response, std::function<void(::grpc::Status)>) = 0;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void EnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC* request, ::sensorStreaming::SensorListRPC* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void EnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC* request, ::sensorStreaming::SensorListRPC* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void EnableSensors(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sensorStreaming::SensorListRPC* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void EnableSensors(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sensorStreaming::SensorListRPC* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
       // Get camera intrinsics parameters from the server
       virtual void GetCamIntrinsics(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC* request, ::sensorStreaming::CameraIntrinsicsRPC* response, std::function<void(::grpc::Status)>) = 0;
       virtual void GetCamIntrinsics(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sensorStreaming::CameraIntrinsicsRPC* response, std::function<void(::grpc::Status)>) = 0;
@@ -86,6 +109,8 @@ class Streamer final {
     #endif
     virtual class experimental_async_interface* experimental_async() { return nullptr; }
   private:
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensorStreaming::SensorListRPC>* AsyncEnableSensorsRaw(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensorStreaming::SensorListRPC>* PrepareAsyncEnableSensorsRaw(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensorStreaming::CameraIntrinsicsRPC>* AsyncGetCamIntrinsicsRaw(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensorStreaming::CameraIntrinsicsRPC>* PrepareAsyncGetCamIntrinsicsRaw(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientReaderInterface< ::sensorStreaming::SensorFrameRPC>* SensorStreamRaw(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC& request) = 0;
@@ -95,6 +120,13 @@ class Streamer final {
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel);
+    ::grpc::Status EnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC& request, ::sensorStreaming::SensorListRPC* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensorStreaming::SensorListRPC>> AsyncEnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensorStreaming::SensorListRPC>>(AsyncEnableSensorsRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensorStreaming::SensorListRPC>> PrepareAsyncEnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensorStreaming::SensorListRPC>>(PrepareAsyncEnableSensorsRaw(context, request, cq));
+    }
     ::grpc::Status GetCamIntrinsics(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC& request, ::sensorStreaming::CameraIntrinsicsRPC* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensorStreaming::CameraIntrinsicsRPC>> AsyncGetCamIntrinsics(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensorStreaming::CameraIntrinsicsRPC>>(AsyncGetCamIntrinsicsRaw(context, request, cq));
@@ -114,6 +146,18 @@ class Streamer final {
     class experimental_async final :
       public StubInterface::experimental_async_interface {
      public:
+      void EnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC* request, ::sensorStreaming::SensorListRPC* response, std::function<void(::grpc::Status)>) override;
+      void EnableSensors(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sensorStreaming::SensorListRPC* response, std::function<void(::grpc::Status)>) override;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void EnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC* request, ::sensorStreaming::SensorListRPC* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void EnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC* request, ::sensorStreaming::SensorListRPC* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void EnableSensors(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sensorStreaming::SensorListRPC* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void EnableSensors(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sensorStreaming::SensorListRPC* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
       void GetCamIntrinsics(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC* request, ::sensorStreaming::CameraIntrinsicsRPC* response, std::function<void(::grpc::Status)>) override;
       void GetCamIntrinsics(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sensorStreaming::CameraIntrinsicsRPC* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -142,11 +186,14 @@ class Streamer final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class experimental_async async_stub_{this};
+    ::grpc::ClientAsyncResponseReader< ::sensorStreaming::SensorListRPC>* AsyncEnableSensorsRaw(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensorStreaming::SensorListRPC>* PrepareAsyncEnableSensorsRaw(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensorStreaming::CameraIntrinsicsRPC>* AsyncGetCamIntrinsicsRaw(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensorStreaming::CameraIntrinsicsRPC>* PrepareAsyncGetCamIntrinsicsRaw(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientReader< ::sensorStreaming::SensorFrameRPC>* SensorStreamRaw(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC& request) override;
     ::grpc::ClientAsyncReader< ::sensorStreaming::SensorFrameRPC>* AsyncSensorStreamRaw(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC& request, ::grpc::CompletionQueue* cq, void* tag) override;
     ::grpc::ClientAsyncReader< ::sensorStreaming::SensorFrameRPC>* PrepareAsyncSensorStreamRaw(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC& request, ::grpc::CompletionQueue* cq) override;
+    const ::grpc::internal::RpcMethod rpcmethod_EnableSensors_;
     const ::grpc::internal::RpcMethod rpcmethod_GetCamIntrinsics_;
     const ::grpc::internal::RpcMethod rpcmethod_SensorStream_;
   };
@@ -156,10 +203,33 @@ class Streamer final {
    public:
     Service();
     virtual ~Service();
+    // Enable sensors listed in message,
+    // returns the list of successfully enabled sensors
+    virtual ::grpc::Status EnableSensors(::grpc::ServerContext* context, const ::sensorStreaming::SensorListRPC* request, ::sensorStreaming::SensorListRPC* response);
     // Get camera intrinsics parameters from the server
     virtual ::grpc::Status GetCamIntrinsics(::grpc::ServerContext* context, const ::sensorStreaming::NameRPC* request, ::sensorStreaming::CameraIntrinsicsRPC* response);
     // Receive sensors data as a stream
     virtual ::grpc::Status SensorStream(::grpc::ServerContext* context, const ::sensorStreaming::NameRPC* request, ::grpc::ServerWriter< ::sensorStreaming::SensorFrameRPC>* writer);
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_EnableSensors : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_EnableSensors() {
+      ::grpc::Service::MarkMethodAsync(0);
+    }
+    ~WithAsyncMethod_EnableSensors() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status EnableSensors(::grpc::ServerContext* /*context*/, const ::sensorStreaming::SensorListRPC* /*request*/, ::sensorStreaming::SensorListRPC* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestEnableSensors(::grpc::ServerContext* context, ::sensorStreaming::SensorListRPC* request, ::grpc::ServerAsyncResponseWriter< ::sensorStreaming::SensorListRPC>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
   };
   template <class BaseClass>
   class WithAsyncMethod_GetCamIntrinsics : public BaseClass {
@@ -167,7 +237,7 @@ class Streamer final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetCamIntrinsics() {
-      ::grpc::Service::MarkMethodAsync(0);
+      ::grpc::Service::MarkMethodAsync(1);
     }
     ~WithAsyncMethod_GetCamIntrinsics() override {
       BaseClassMustBeDerivedFromService(this);
@@ -178,7 +248,7 @@ class Streamer final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetCamIntrinsics(::grpc::ServerContext* context, ::sensorStreaming::NameRPC* request, ::grpc::ServerAsyncResponseWriter< ::sensorStreaming::CameraIntrinsicsRPC>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -187,7 +257,7 @@ class Streamer final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SensorStream() {
-      ::grpc::Service::MarkMethodAsync(1);
+      ::grpc::Service::MarkMethodAsync(2);
     }
     ~WithAsyncMethod_SensorStream() override {
       BaseClassMustBeDerivedFromService(this);
@@ -198,10 +268,57 @@ class Streamer final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSensorStream(::grpc::ServerContext* context, ::sensorStreaming::NameRPC* request, ::grpc::ServerAsyncWriter< ::sensorStreaming::SensorFrameRPC>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(1, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(2, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_GetCamIntrinsics<WithAsyncMethod_SensorStream<Service > > AsyncService;
+  typedef WithAsyncMethod_EnableSensors<WithAsyncMethod_GetCamIntrinsics<WithAsyncMethod_SensorStream<Service > > > AsyncService;
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_EnableSensors : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_EnableSensors() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodCallback(0,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::sensorStreaming::SensorListRPC, ::sensorStreaming::SensorListRPC>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::sensorStreaming::SensorListRPC* request, ::sensorStreaming::SensorListRPC* response) { return this->EnableSensors(context, request, response); }));}
+    void SetMessageAllocatorFor_EnableSensors(
+        ::grpc::experimental::MessageAllocator< ::sensorStreaming::SensorListRPC, ::sensorStreaming::SensorListRPC>* allocator) {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
+    #else
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(0);
+    #endif
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sensorStreaming::SensorListRPC, ::sensorStreaming::SensorListRPC>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_EnableSensors() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status EnableSensors(::grpc::ServerContext* /*context*/, const ::sensorStreaming::SensorListRPC* /*request*/, ::sensorStreaming::SensorListRPC* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* EnableSensors(
+      ::grpc::CallbackServerContext* /*context*/, const ::sensorStreaming::SensorListRPC* /*request*/, ::sensorStreaming::SensorListRPC* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* EnableSensors(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::sensorStreaming::SensorListRPC* /*request*/, ::sensorStreaming::SensorListRPC* /*response*/)
+    #endif
+      { return nullptr; }
+  };
   template <class BaseClass>
   class ExperimentalWithCallbackMethod_GetCamIntrinsics : public BaseClass {
    private:
@@ -213,7 +330,7 @@ class Streamer final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(0,
+        MarkMethodCallback(1,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::sensorStreaming::NameRPC, ::sensorStreaming::CameraIntrinsicsRPC>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -225,9 +342,9 @@ class Streamer final {
     void SetMessageAllocatorFor_GetCamIntrinsics(
         ::grpc::experimental::MessageAllocator< ::sensorStreaming::NameRPC, ::sensorStreaming::CameraIntrinsicsRPC>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
     #else
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(0);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(1);
     #endif
       static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::sensorStreaming::NameRPC, ::sensorStreaming::CameraIntrinsicsRPC>*>(handler)
               ->SetMessageAllocator(allocator);
@@ -260,7 +377,7 @@ class Streamer final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodCallback(1,
+        MarkMethodCallback(2,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::sensorStreaming::NameRPC, ::sensorStreaming::SensorFrameRPC>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -288,17 +405,34 @@ class Streamer final {
       { return nullptr; }
   };
   #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-  typedef ExperimentalWithCallbackMethod_GetCamIntrinsics<ExperimentalWithCallbackMethod_SensorStream<Service > > CallbackService;
+  typedef ExperimentalWithCallbackMethod_EnableSensors<ExperimentalWithCallbackMethod_GetCamIntrinsics<ExperimentalWithCallbackMethod_SensorStream<Service > > > CallbackService;
   #endif
 
-  typedef ExperimentalWithCallbackMethod_GetCamIntrinsics<ExperimentalWithCallbackMethod_SensorStream<Service > > ExperimentalCallbackService;
+  typedef ExperimentalWithCallbackMethod_EnableSensors<ExperimentalWithCallbackMethod_GetCamIntrinsics<ExperimentalWithCallbackMethod_SensorStream<Service > > > ExperimentalCallbackService;
+  template <class BaseClass>
+  class WithGenericMethod_EnableSensors : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_EnableSensors() {
+      ::grpc::Service::MarkMethodGeneric(0);
+    }
+    ~WithGenericMethod_EnableSensors() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status EnableSensors(::grpc::ServerContext* /*context*/, const ::sensorStreaming::SensorListRPC* /*request*/, ::sensorStreaming::SensorListRPC* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
   template <class BaseClass>
   class WithGenericMethod_GetCamIntrinsics : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetCamIntrinsics() {
-      ::grpc::Service::MarkMethodGeneric(0);
+      ::grpc::Service::MarkMethodGeneric(1);
     }
     ~WithGenericMethod_GetCamIntrinsics() override {
       BaseClassMustBeDerivedFromService(this);
@@ -315,7 +449,7 @@ class Streamer final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SensorStream() {
-      ::grpc::Service::MarkMethodGeneric(1);
+      ::grpc::Service::MarkMethodGeneric(2);
     }
     ~WithGenericMethod_SensorStream() override {
       BaseClassMustBeDerivedFromService(this);
@@ -327,12 +461,32 @@ class Streamer final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_EnableSensors : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_EnableSensors() {
+      ::grpc::Service::MarkMethodRaw(0);
+    }
+    ~WithRawMethod_EnableSensors() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status EnableSensors(::grpc::ServerContext* /*context*/, const ::sensorStreaming::SensorListRPC* /*request*/, ::sensorStreaming::SensorListRPC* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestEnableSensors(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_GetCamIntrinsics : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetCamIntrinsics() {
-      ::grpc::Service::MarkMethodRaw(0);
+      ::grpc::Service::MarkMethodRaw(1);
     }
     ~WithRawMethod_GetCamIntrinsics() override {
       BaseClassMustBeDerivedFromService(this);
@@ -343,7 +497,7 @@ class Streamer final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetCamIntrinsics(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -352,7 +506,7 @@ class Streamer final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SensorStream() {
-      ::grpc::Service::MarkMethodRaw(1);
+      ::grpc::Service::MarkMethodRaw(2);
     }
     ~WithRawMethod_SensorStream() override {
       BaseClassMustBeDerivedFromService(this);
@@ -363,8 +517,46 @@ class Streamer final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSensorStream(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(1, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(2, context, request, writer, new_call_cq, notification_cq, tag);
     }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_EnableSensors : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_EnableSensors() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodRawCallback(0,
+          new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->EnableSensors(context, request, response); }));
+    }
+    ~ExperimentalWithRawCallbackMethod_EnableSensors() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status EnableSensors(::grpc::ServerContext* /*context*/, const ::sensorStreaming::SensorListRPC* /*request*/, ::sensorStreaming::SensorListRPC* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* EnableSensors(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* EnableSensors(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #endif
+      { return nullptr; }
   };
   template <class BaseClass>
   class ExperimentalWithRawCallbackMethod_GetCamIntrinsics : public BaseClass {
@@ -377,7 +569,7 @@ class Streamer final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(0,
+        MarkMethodRawCallback(1,
           new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -415,7 +607,7 @@ class Streamer final {
     #else
       ::grpc::Service::experimental().
     #endif
-        MarkMethodRawCallback(1,
+        MarkMethodRawCallback(2,
           new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -443,12 +635,32 @@ class Streamer final {
       { return nullptr; }
   };
   template <class BaseClass>
+  class WithStreamedUnaryMethod_EnableSensors : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_EnableSensors() {
+      ::grpc::Service::MarkMethodStreamed(0,
+        new ::grpc::internal::StreamedUnaryHandler< ::sensorStreaming::SensorListRPC, ::sensorStreaming::SensorListRPC>(std::bind(&WithStreamedUnaryMethod_EnableSensors<BaseClass>::StreamedEnableSensors, this, std::placeholders::_1, std::placeholders::_2)));
+    }
+    ~WithStreamedUnaryMethod_EnableSensors() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status EnableSensors(::grpc::ServerContext* /*context*/, const ::sensorStreaming::SensorListRPC* /*request*/, ::sensorStreaming::SensorListRPC* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedEnableSensors(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensorStreaming::SensorListRPC,::sensorStreaming::SensorListRPC>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_GetCamIntrinsics : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetCamIntrinsics() {
-      ::grpc::Service::MarkMethodStreamed(0,
+      ::grpc::Service::MarkMethodStreamed(1,
         new ::grpc::internal::StreamedUnaryHandler< ::sensorStreaming::NameRPC, ::sensorStreaming::CameraIntrinsicsRPC>(std::bind(&WithStreamedUnaryMethod_GetCamIntrinsics<BaseClass>::StreamedGetCamIntrinsics, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_GetCamIntrinsics() override {
@@ -462,14 +674,14 @@ class Streamer final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedGetCamIntrinsics(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensorStreaming::NameRPC,::sensorStreaming::CameraIntrinsicsRPC>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_GetCamIntrinsics<Service > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_EnableSensors<WithStreamedUnaryMethod_GetCamIntrinsics<Service > > StreamedUnaryService;
   template <class BaseClass>
   class WithSplitStreamingMethod_SensorStream : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_SensorStream() {
-      ::grpc::Service::MarkMethodStreamed(1,
+      ::grpc::Service::MarkMethodStreamed(2,
         new ::grpc::internal::SplitServerStreamingHandler< ::sensorStreaming::NameRPC, ::sensorStreaming::SensorFrameRPC>(std::bind(&WithSplitStreamingMethod_SensorStream<BaseClass>::StreamedSensorStream, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithSplitStreamingMethod_SensorStream() override {
@@ -484,7 +696,7 @@ class Streamer final {
     virtual ::grpc::Status StreamedSensorStream(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::sensorStreaming::NameRPC,::sensorStreaming::SensorFrameRPC>* server_split_streamer) = 0;
   };
   typedef WithSplitStreamingMethod_SensorStream<Service > SplitStreamedService;
-  typedef WithStreamedUnaryMethod_GetCamIntrinsics<WithSplitStreamingMethod_SensorStream<Service > > StreamedService;
+  typedef WithStreamedUnaryMethod_EnableSensors<WithStreamedUnaryMethod_GetCamIntrinsics<WithSplitStreamingMethod_SensorStream<Service > > > StreamedService;
 };
 
 }  // namespace sensorStreaming

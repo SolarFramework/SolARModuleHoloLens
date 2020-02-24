@@ -16,8 +16,13 @@
 #include <google/protobuf/port_def.inc>
 extern PROTOBUF_INTERNAL_EXPORT_sensorStreaming_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_ImageRPC_sensorStreaming_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_sensorStreaming_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_MatRPC_sensorStreaming_2eproto;
+extern PROTOBUF_INTERNAL_EXPORT_sensorStreaming_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_NameRPC_sensorStreaming_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_sensorStreaming_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_PoseRPC_sensorStreaming_2eproto;
 namespace sensorStreaming {
+class SensorListRPCDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<SensorListRPC> _instance;
+} _SensorListRPC_default_instance_;
 class NameRPCDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<NameRPC> _instance;
@@ -130,11 +135,32 @@ static void InitDefaultsscc_info_SensorFrameRPC_sensorStreaming_2eproto() {
       &scc_info_ImageRPC_sensorStreaming_2eproto.base,
       &scc_info_PoseRPC_sensorStreaming_2eproto.base,}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_sensorStreaming_2eproto[6];
+static void InitDefaultsscc_info_SensorListRPC_sensorStreaming_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::sensorStreaming::_SensorListRPC_default_instance_;
+    new (ptr) ::sensorStreaming::SensorListRPC();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::sensorStreaming::SensorListRPC::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_SensorListRPC_sensorStreaming_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_SensorListRPC_sensorStreaming_2eproto}, {
+      &scc_info_NameRPC_sensorStreaming_2eproto.base,}};
+
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_sensorStreaming_2eproto[7];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_sensorStreaming_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_sensorStreaming_2eproto = nullptr;
 
 const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_sensorStreaming_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensorStreaming::SensorListRPC, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::sensorStreaming::SensorListRPC, sensor_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensorStreaming::NameRPC, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -194,17 +220,20 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_sensorStreaming_2eproto::offse
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::sensorStreaming::SensorFrameRPC, image_),
   PROTOBUF_FIELD_OFFSET(::sensorStreaming::SensorFrameRPC, pose_),
+  PROTOBUF_FIELD_OFFSET(::sensorStreaming::SensorFrameRPC, timestamp_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, sizeof(::sensorStreaming::NameRPC)},
-  { 6, -1, sizeof(::sensorStreaming::CameraIntrinsicsRPC)},
-  { 15, -1, sizeof(::sensorStreaming::MatRPC)},
-  { 36, -1, sizeof(::sensorStreaming::PoseRPC)},
-  { 44, -1, sizeof(::sensorStreaming::ImageRPC)},
-  { 52, -1, sizeof(::sensorStreaming::SensorFrameRPC)},
+  { 0, -1, sizeof(::sensorStreaming::SensorListRPC)},
+  { 6, -1, sizeof(::sensorStreaming::NameRPC)},
+  { 12, -1, sizeof(::sensorStreaming::CameraIntrinsicsRPC)},
+  { 21, -1, sizeof(::sensorStreaming::MatRPC)},
+  { 42, -1, sizeof(::sensorStreaming::PoseRPC)},
+  { 50, -1, sizeof(::sensorStreaming::ImageRPC)},
+  { 58, -1, sizeof(::sensorStreaming::SensorFrameRPC)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensorStreaming::_SensorListRPC_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensorStreaming::_NameRPC_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensorStreaming::_CameraIntrinsicsRPC_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensorStreaming::_MatRPC_default_instance_),
@@ -215,51 +244,247 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 
 const char descriptor_table_protodef_sensorStreaming_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\025sensorStreaming.proto\022\017sensorStreaming"
-  "\"\035\n\007NameRPC\022\022\n\ncameraName\030\001 \001(\t\"E\n\023Camer"
-  "aIntrinsicsRPC\022\n\n\002fx\030\001 \001(\002\022\n\n\002fy\030\002 \001(\002\022\n"
-  "\n\002cx\030\003 \001(\002\022\n\n\002cy\030\004 \001(\002\"\330\001\n\006MatRPC\022\013\n\003m11"
-  "\030\001 \001(\002\022\013\n\003m12\030\002 \001(\002\022\013\n\003m13\030\003 \001(\002\022\013\n\003m14\030"
-  "\004 \001(\002\022\013\n\003m21\030\005 \001(\002\022\013\n\003m22\030\006 \001(\002\022\013\n\003m23\030\007"
-  " \001(\002\022\013\n\003m24\030\010 \001(\002\022\013\n\003m31\030\t \001(\002\022\013\n\003m32\030\n "
-  "\001(\002\022\013\n\003m33\030\013 \001(\002\022\013\n\003m34\030\014 \001(\002\022\013\n\003m41\030\r \001"
-  "(\002\022\013\n\003m42\030\016 \001(\002\022\013\n\003m43\030\017 \001(\002\022\013\n\003m44\030\020 \001("
-  "\002\"\223\001\n\007PoseRPC\022+\n\ncameraProj\030\001 \001(\0132\027.sens"
-  "orStreaming.MatRPC\022+\n\ncameraView\030\002 \001(\0132\027"
-  ".sensorStreaming.MatRPC\022.\n\rframeToOrigin"
-  "\030\003 \001(\0132\027.sensorStreaming.MatRPC\"7\n\010Image"
-  "RPC\022\r\n\005width\030\001 \001(\005\022\016\n\006height\030\002 \001(\005\022\014\n\004da"
-  "ta\030\003 \001(\014\"b\n\016SensorFrameRPC\022(\n\005image\030\001 \001("
-  "\0132\031.sensorStreaming.ImageRPC\022&\n\004pose\030\002 \001"
-  "(\0132\030.sensorStreaming.PoseRPC2\257\001\n\010Streame"
-  "r\022T\n\020GetCamIntrinsics\022\030.sensorStreaming."
-  "NameRPC\032$.sensorStreaming.CameraIntrinsi"
-  "csRPC\"\000\022M\n\014SensorStream\022\030.sensorStreamin"
-  "g.NameRPC\032\037.sensorStreaming.SensorFrameR"
-  "PC\"\0000\001B5\n\025solar.sensorStreamingB\024SensorS"
-  "treamingProtoP\001\242\002\003STRb\006proto3"
+  "\"9\n\rSensorListRPC\022(\n\006sensor\030\001 \003(\0132\030.sens"
+  "orStreaming.NameRPC\"\035\n\007NameRPC\022\022\n\ncamera"
+  "Name\030\001 \001(\t\"E\n\023CameraIntrinsicsRPC\022\n\n\002fx\030"
+  "\001 \001(\002\022\n\n\002fy\030\002 \001(\002\022\n\n\002cx\030\003 \001(\002\022\n\n\002cy\030\004 \001("
+  "\002\"\330\001\n\006MatRPC\022\013\n\003m11\030\001 \001(\002\022\013\n\003m12\030\002 \001(\002\022\013"
+  "\n\003m13\030\003 \001(\002\022\013\n\003m14\030\004 \001(\002\022\013\n\003m21\030\005 \001(\002\022\013\n"
+  "\003m22\030\006 \001(\002\022\013\n\003m23\030\007 \001(\002\022\013\n\003m24\030\010 \001(\002\022\013\n\003"
+  "m31\030\t \001(\002\022\013\n\003m32\030\n \001(\002\022\013\n\003m33\030\013 \001(\002\022\013\n\003m"
+  "34\030\014 \001(\002\022\013\n\003m41\030\r \001(\002\022\013\n\003m42\030\016 \001(\002\022\013\n\003m4"
+  "3\030\017 \001(\002\022\013\n\003m44\030\020 \001(\002\"\223\001\n\007PoseRPC\022+\n\ncame"
+  "raProj\030\001 \001(\0132\027.sensorStreaming.MatRPC\022+\n"
+  "\ncameraView\030\002 \001(\0132\027.sensorStreaming.MatR"
+  "PC\022.\n\rframeToOrigin\030\003 \001(\0132\027.sensorStream"
+  "ing.MatRPC\"7\n\010ImageRPC\022\r\n\005width\030\001 \001(\005\022\016\n"
+  "\006height\030\002 \001(\005\022\014\n\004data\030\003 \001(\014\"u\n\016SensorFra"
+  "meRPC\022(\n\005image\030\001 \001(\0132\031.sensorStreaming.I"
+  "mageRPC\022&\n\004pose\030\002 \001(\0132\030.sensorStreaming."
+  "PoseRPC\022\021\n\ttimestamp\030\003 \001(\0012\200\002\n\010Streamer\022"
+  "O\n\rEnableSensors\022\036.sensorStreaming.Senso"
+  "rListRPC\032\036.sensorStreaming.SensorListRPC"
+  "\022T\n\020GetCamIntrinsics\022\030.sensorStreaming.N"
+  "ameRPC\032$.sensorStreaming.CameraIntrinsic"
+  "sRPC\"\000\022M\n\014SensorStream\022\030.sensorStreaming"
+  ".NameRPC\032\037.sensorStreaming.SensorFrameRP"
+  "C\"\0000\001B5\n\025solar.sensorStreamingB\024SensorSt"
+  "reamingProtoP\001\242\002\003STRb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_sensorStreaming_2eproto_deps[1] = {
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_sensorStreaming_2eproto_sccs[6] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_sensorStreaming_2eproto_sccs[7] = {
   &scc_info_CameraIntrinsicsRPC_sensorStreaming_2eproto.base,
   &scc_info_ImageRPC_sensorStreaming_2eproto.base,
   &scc_info_MatRPC_sensorStreaming_2eproto.base,
   &scc_info_NameRPC_sensorStreaming_2eproto.base,
   &scc_info_PoseRPC_sensorStreaming_2eproto.base,
   &scc_info_SensorFrameRPC_sensorStreaming_2eproto.base,
+  &scc_info_SensorListRPC_sensorStreaming_2eproto.base,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_sensorStreaming_2eproto_once;
 static bool descriptor_table_sensorStreaming_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_sensorStreaming_2eproto = {
-  &descriptor_table_sensorStreaming_2eproto_initialized, descriptor_table_protodef_sensorStreaming_2eproto, "sensorStreaming.proto", 909,
-  &descriptor_table_sensorStreaming_2eproto_once, descriptor_table_sensorStreaming_2eproto_sccs, descriptor_table_sensorStreaming_2eproto_deps, 6, 0,
+  &descriptor_table_sensorStreaming_2eproto_initialized, descriptor_table_protodef_sensorStreaming_2eproto, "sensorStreaming.proto", 1068,
+  &descriptor_table_sensorStreaming_2eproto_once, descriptor_table_sensorStreaming_2eproto_sccs, descriptor_table_sensorStreaming_2eproto_deps, 7, 0,
   schemas, file_default_instances, TableStruct_sensorStreaming_2eproto::offsets,
-  file_level_metadata_sensorStreaming_2eproto, 6, file_level_enum_descriptors_sensorStreaming_2eproto, file_level_service_descriptors_sensorStreaming_2eproto,
+  file_level_metadata_sensorStreaming_2eproto, 7, file_level_enum_descriptors_sensorStreaming_2eproto, file_level_service_descriptors_sensorStreaming_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
 static bool dynamic_init_dummy_sensorStreaming_2eproto = (  ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptors(&descriptor_table_sensorStreaming_2eproto), true);
 namespace sensorStreaming {
+
+// ===================================================================
+
+void SensorListRPC::InitAsDefaultInstance() {
+}
+class SensorListRPC::_Internal {
+ public:
+};
+
+SensorListRPC::SensorListRPC()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:sensorStreaming.SensorListRPC)
+}
+SensorListRPC::SensorListRPC(const SensorListRPC& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      sensor_(from.sensor_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:sensorStreaming.SensorListRPC)
+}
+
+void SensorListRPC::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_SensorListRPC_sensorStreaming_2eproto.base);
+}
+
+SensorListRPC::~SensorListRPC() {
+  // @@protoc_insertion_point(destructor:sensorStreaming.SensorListRPC)
+  SharedDtor();
+}
+
+void SensorListRPC::SharedDtor() {
+}
+
+void SensorListRPC::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const SensorListRPC& SensorListRPC::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_SensorListRPC_sensorStreaming_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void SensorListRPC::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensorStreaming.SensorListRPC)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  sensor_.Clear();
+  _internal_metadata_.Clear();
+}
+
+const char* SensorListRPC::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // repeated .sensorStreaming.NameRPC sensor = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_sensor(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* SensorListRPC::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensorStreaming.SensorListRPC)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .sensorStreaming.NameRPC sensor = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_sensor_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, this->_internal_sensor(i), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensorStreaming.SensorListRPC)
+  return target;
+}
+
+size_t SensorListRPC::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensorStreaming.SensorListRPC)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .sensorStreaming.NameRPC sensor = 1;
+  total_size += 1UL * this->_internal_sensor_size();
+  for (const auto& msg : this->sensor_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void SensorListRPC::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:sensorStreaming.SensorListRPC)
+  GOOGLE_DCHECK_NE(&from, this);
+  const SensorListRPC* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<SensorListRPC>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:sensorStreaming.SensorListRPC)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:sensorStreaming.SensorListRPC)
+    MergeFrom(*source);
+  }
+}
+
+void SensorListRPC::MergeFrom(const SensorListRPC& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensorStreaming.SensorListRPC)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  sensor_.MergeFrom(from.sensor_);
+}
+
+void SensorListRPC::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:sensorStreaming.SensorListRPC)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void SensorListRPC::CopyFrom(const SensorListRPC& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensorStreaming.SensorListRPC)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool SensorListRPC::IsInitialized() const {
+  return true;
+}
+
+void SensorListRPC::InternalSwap(SensorListRPC* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  sensor_.InternalSwap(&other->sensor_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata SensorListRPC::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
 
 // ===================================================================
 
@@ -1820,14 +2045,15 @@ SensorFrameRPC::SensorFrameRPC(const SensorFrameRPC& from)
   } else {
     pose_ = nullptr;
   }
+  timestamp_ = from.timestamp_;
   // @@protoc_insertion_point(copy_constructor:sensorStreaming.SensorFrameRPC)
 }
 
 void SensorFrameRPC::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_SensorFrameRPC_sensorStreaming_2eproto.base);
   ::memset(&image_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&pose_) -
-      reinterpret_cast<char*>(&image_)) + sizeof(pose_));
+      reinterpret_cast<char*>(&timestamp_) -
+      reinterpret_cast<char*>(&image_)) + sizeof(timestamp_));
 }
 
 SensorFrameRPC::~SensorFrameRPC() {
@@ -1863,6 +2089,7 @@ void SensorFrameRPC::Clear() {
     delete pose_;
   }
   pose_ = nullptr;
+  timestamp_ = 0;
   _internal_metadata_.Clear();
 }
 
@@ -1885,6 +2112,13 @@ const char* SensorFrameRPC::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_pose(), ptr);
           CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // double timestamp = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 25)) {
+          timestamp_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          ptr += sizeof(double);
         } else goto handle_unusual;
         continue;
       default: {
@@ -1929,6 +2163,12 @@ failure:
         2, _Internal::pose(this), target, stream);
   }
 
+  // double timestamp = 3;
+  if (!(this->timestamp() <= 0 && this->timestamp() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(3, this->_internal_timestamp(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
@@ -1957,6 +2197,11 @@ size_t SensorFrameRPC::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *pose_);
+  }
+
+  // double timestamp = 3;
+  if (!(this->timestamp() <= 0 && this->timestamp() >= 0)) {
+    total_size += 1 + 8;
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1996,6 +2241,9 @@ void SensorFrameRPC::MergeFrom(const SensorFrameRPC& from) {
   if (from.has_pose()) {
     _internal_mutable_pose()->::sensorStreaming::PoseRPC::MergeFrom(from._internal_pose());
   }
+  if (!(from.timestamp() <= 0 && from.timestamp() >= 0)) {
+    _internal_set_timestamp(from._internal_timestamp());
+  }
 }
 
 void SensorFrameRPC::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -2021,6 +2269,7 @@ void SensorFrameRPC::InternalSwap(SensorFrameRPC* other) {
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(image_, other->image_);
   swap(pose_, other->pose_);
+  swap(timestamp_, other->timestamp_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata SensorFrameRPC::GetMetadata() const {
@@ -2031,6 +2280,9 @@ void SensorFrameRPC::InternalSwap(SensorFrameRPC* other) {
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace sensorStreaming
 PROTOBUF_NAMESPACE_OPEN
+template<> PROTOBUF_NOINLINE ::sensorStreaming::SensorListRPC* Arena::CreateMaybeMessage< ::sensorStreaming::SensorListRPC >(Arena* arena) {
+  return Arena::CreateInternal< ::sensorStreaming::SensorListRPC >(arena);
+}
 template<> PROTOBUF_NOINLINE ::sensorStreaming::NameRPC* Arena::CreateMaybeMessage< ::sensorStreaming::NameRPC >(Arena* arena) {
   return Arena::CreateInternal< ::sensorStreaming::NameRPC >(arena);
 }

@@ -47,7 +47,7 @@ struct TableStruct_sensorStreaming_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[6]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[7]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -73,6 +73,9 @@ extern PoseRPCDefaultTypeInternal _PoseRPC_default_instance_;
 class SensorFrameRPC;
 class SensorFrameRPCDefaultTypeInternal;
 extern SensorFrameRPCDefaultTypeInternal _SensorFrameRPC_default_instance_;
+class SensorListRPC;
+class SensorListRPCDefaultTypeInternal;
+extern SensorListRPCDefaultTypeInternal _SensorListRPC_default_instance_;
 }  // namespace sensorStreaming
 PROTOBUF_NAMESPACE_OPEN
 template<> ::sensorStreaming::CameraIntrinsicsRPC* Arena::CreateMaybeMessage<::sensorStreaming::CameraIntrinsicsRPC>(Arena*);
@@ -81,10 +84,148 @@ template<> ::sensorStreaming::MatRPC* Arena::CreateMaybeMessage<::sensorStreamin
 template<> ::sensorStreaming::NameRPC* Arena::CreateMaybeMessage<::sensorStreaming::NameRPC>(Arena*);
 template<> ::sensorStreaming::PoseRPC* Arena::CreateMaybeMessage<::sensorStreaming::PoseRPC>(Arena*);
 template<> ::sensorStreaming::SensorFrameRPC* Arena::CreateMaybeMessage<::sensorStreaming::SensorFrameRPC>(Arena*);
+template<> ::sensorStreaming::SensorListRPC* Arena::CreateMaybeMessage<::sensorStreaming::SensorListRPC>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace sensorStreaming {
 
 // ===================================================================
+
+class SensorListRPC :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensorStreaming.SensorListRPC) */ {
+ public:
+  SensorListRPC();
+  virtual ~SensorListRPC();
+
+  SensorListRPC(const SensorListRPC& from);
+  SensorListRPC(SensorListRPC&& from) noexcept
+    : SensorListRPC() {
+    *this = ::std::move(from);
+  }
+
+  inline SensorListRPC& operator=(const SensorListRPC& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SensorListRPC& operator=(SensorListRPC&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const SensorListRPC& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const SensorListRPC* internal_default_instance() {
+    return reinterpret_cast<const SensorListRPC*>(
+               &_SensorListRPC_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    0;
+
+  friend void swap(SensorListRPC& a, SensorListRPC& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SensorListRPC* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline SensorListRPC* New() const final {
+    return CreateMaybeMessage<SensorListRPC>(nullptr);
+  }
+
+  SensorListRPC* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<SensorListRPC>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const SensorListRPC& from);
+  void MergeFrom(const SensorListRPC& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SensorListRPC* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensorStreaming.SensorListRPC";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_sensorStreaming_2eproto);
+    return ::descriptor_table_sensorStreaming_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSensorFieldNumber = 1,
+  };
+  // repeated .sensorStreaming.NameRPC sensor = 1;
+  int sensor_size() const;
+  private:
+  int _internal_sensor_size() const;
+  public:
+  void clear_sensor();
+  ::sensorStreaming::NameRPC* mutable_sensor(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensorStreaming::NameRPC >*
+      mutable_sensor();
+  private:
+  const ::sensorStreaming::NameRPC& _internal_sensor(int index) const;
+  ::sensorStreaming::NameRPC* _internal_add_sensor();
+  public:
+  const ::sensorStreaming::NameRPC& sensor(int index) const;
+  ::sensorStreaming::NameRPC* add_sensor();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensorStreaming::NameRPC >&
+      sensor() const;
+
+  // @@protoc_insertion_point(class_scope:sensorStreaming.SensorListRPC)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensorStreaming::NameRPC > sensor_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_sensorStreaming_2eproto;
+};
+// -------------------------------------------------------------------
 
 class NameRPC :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensorStreaming.NameRPC) */ {
@@ -128,7 +269,7 @@ class NameRPC :
                &_NameRPC_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    0;
+    1;
 
   friend void swap(NameRPC& a, NameRPC& b) {
     a.Swap(&b);
@@ -263,7 +404,7 @@ class CameraIntrinsicsRPC :
                &_CameraIntrinsicsRPC_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    2;
 
   friend void swap(CameraIntrinsicsRPC& a, CameraIntrinsicsRPC& b) {
     a.Swap(&b);
@@ -424,7 +565,7 @@ class MatRPC :
                &_MatRPC_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(MatRPC& a, MatRPC& b) {
     a.Swap(&b);
@@ -717,7 +858,7 @@ class PoseRPC :
                &_PoseRPC_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(PoseRPC& a, PoseRPC& b) {
     a.Swap(&b);
@@ -885,7 +1026,7 @@ class ImageRPC :
                &_ImageRPC_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(ImageRPC& a, ImageRPC& b) {
     a.Swap(&b);
@@ -1042,7 +1183,7 @@ class SensorFrameRPC :
                &_SensorFrameRPC_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(SensorFrameRPC& a, SensorFrameRPC& b) {
     a.Swap(&b);
@@ -1108,6 +1249,7 @@ class SensorFrameRPC :
   enum : int {
     kImageFieldNumber = 1,
     kPoseFieldNumber = 2,
+    kTimestampFieldNumber = 3,
   };
   // .sensorStreaming.ImageRPC image = 1;
   bool has_image() const;
@@ -1139,6 +1281,15 @@ class SensorFrameRPC :
   ::sensorStreaming::PoseRPC* _internal_mutable_pose();
   public:
 
+  // double timestamp = 3;
+  void clear_timestamp();
+  double timestamp() const;
+  void set_timestamp(double value);
+  private:
+  double _internal_timestamp() const;
+  void _internal_set_timestamp(double value);
+  public:
+
   // @@protoc_insertion_point(class_scope:sensorStreaming.SensorFrameRPC)
  private:
   class _Internal;
@@ -1146,6 +1297,7 @@ class SensorFrameRPC :
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::sensorStreaming::ImageRPC* image_;
   ::sensorStreaming::PoseRPC* pose_;
+  double timestamp_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_sensorStreaming_2eproto;
 };
@@ -1158,6 +1310,49 @@ class SensorFrameRPC :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
+// SensorListRPC
+
+// repeated .sensorStreaming.NameRPC sensor = 1;
+inline int SensorListRPC::_internal_sensor_size() const {
+  return sensor_.size();
+}
+inline int SensorListRPC::sensor_size() const {
+  return _internal_sensor_size();
+}
+inline void SensorListRPC::clear_sensor() {
+  sensor_.Clear();
+}
+inline ::sensorStreaming::NameRPC* SensorListRPC::mutable_sensor(int index) {
+  // @@protoc_insertion_point(field_mutable:sensorStreaming.SensorListRPC.sensor)
+  return sensor_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensorStreaming::NameRPC >*
+SensorListRPC::mutable_sensor() {
+  // @@protoc_insertion_point(field_mutable_list:sensorStreaming.SensorListRPC.sensor)
+  return &sensor_;
+}
+inline const ::sensorStreaming::NameRPC& SensorListRPC::_internal_sensor(int index) const {
+  return sensor_.Get(index);
+}
+inline const ::sensorStreaming::NameRPC& SensorListRPC::sensor(int index) const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.SensorListRPC.sensor)
+  return _internal_sensor(index);
+}
+inline ::sensorStreaming::NameRPC* SensorListRPC::_internal_add_sensor() {
+  return sensor_.Add();
+}
+inline ::sensorStreaming::NameRPC* SensorListRPC::add_sensor() {
+  // @@protoc_insertion_point(field_add:sensorStreaming.SensorListRPC.sensor)
+  return _internal_add_sensor();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensorStreaming::NameRPC >&
+SensorListRPC::sensor() const {
+  // @@protoc_insertion_point(field_list:sensorStreaming.SensorListRPC.sensor)
+  return sensor_;
+}
+
+// -------------------------------------------------------------------
+
 // NameRPC
 
 // string cameraName = 1;
@@ -2040,9 +2235,31 @@ inline void SensorFrameRPC::set_allocated_pose(::sensorStreaming::PoseRPC* pose)
   // @@protoc_insertion_point(field_set_allocated:sensorStreaming.SensorFrameRPC.pose)
 }
 
+// double timestamp = 3;
+inline void SensorFrameRPC::clear_timestamp() {
+  timestamp_ = 0;
+}
+inline double SensorFrameRPC::_internal_timestamp() const {
+  return timestamp_;
+}
+inline double SensorFrameRPC::timestamp() const {
+  // @@protoc_insertion_point(field_get:sensorStreaming.SensorFrameRPC.timestamp)
+  return _internal_timestamp();
+}
+inline void SensorFrameRPC::_internal_set_timestamp(double value) {
+  
+  timestamp_ = value;
+}
+inline void SensorFrameRPC::set_timestamp(double value) {
+  _internal_set_timestamp(value);
+  // @@protoc_insertion_point(field_set:sensorStreaming.SensorFrameRPC.timestamp)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

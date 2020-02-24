@@ -24,6 +24,7 @@ namespace xpcf = org::bcom::xpcf;
 // From gRPC proto file
 using sensorStreaming::Streamer;
 using sensorStreaming::NameRPC;
+using sensorStreaming::SensorListRPC;
 using sensorStreaming::CameraIntrinsicsRPC;
 using sensorStreaming::PoseRPC;
 using sensorStreaming::MatRPC;
@@ -63,6 +64,8 @@ public:
     /// @brief Stop the connection to the device.
     /// @return FrameworkReturnCode::_SUCCESS if successful, eiher FrameworkReturnCode::_ERROR_.
     FrameworkReturnCode stop() override;
+
+	FrameworkReturnCode EnableSensors(std::vector<std::string> sensorList) override;
 
     /// @brief Fill frames and poses vectors containing latest sensors data from the device.
     /// @return FrameworkReturnCode to track successful or failing event.

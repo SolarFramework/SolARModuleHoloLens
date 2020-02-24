@@ -79,6 +79,10 @@ PoseMatrix ParsePoseRPC(PoseRPC poseRPC)
 	PoseMatrix camView = ParseMatRPC(poseRPC.cameraview());
 	PoseMatrix frameToOrigin = ParseMatRPC(poseRPC.frametoorigin());
 
+	LOG_INFO("camProj\n{}", camProj);
+	LOG_INFO("camView\n{}", camView);
+	LOG_INFO("frameToOrigin\n{}", frameToOrigin);
+
 	PoseMatrix pose = PoseMatrix::Zero();
 	// cameraToImage flips Y and Z axis to comply with the output coordinate system.
 	PoseMatrix cameraToImage = PoseMatrix::Identity();
@@ -217,6 +221,41 @@ FrameworkReturnCode SolARBuiltInSLAM::stop()
 	return FrameworkReturnCode::_SUCCESS;
 }
 
+FrameworkReturnCode SolARBuiltInSLAM::EnableSensors(std::vector<std::string> sensorList)
+{
+	if (!m_isClientConnected)
+	{
+		LOG_ERROR("Client not connected, can't satisfy request");
+		return FrameworkReturnCode::_ERROR_;
+	}
+
+	SensorListRPC enableRequest;
+	NameRPC* newSensor;
+	for (auto sensor : sensorList)
+	{
+		newSensor = enableRequest.add_sensor();
+		newSensor->set_cameraname(sensor);
+	}
+
+	SensorListRPC enabledSensors;
+	grpc::Status status = m_stub->EnableSensors(&m_context, enableRequest, &enabledSensors);
+
+	if (!status.ok())
+	{
+		LOG_ERROR("Request ended abrubtly: {}", status.error_message());
+	}
+
+	int enabledCount = enabledSensors.sensor_size();
+	int requestedCount = enableRequest.sensor_size();
+	if (enabledCount != requestedCount)
+	{
+		LOG_ERROR("Some sensors could not be successfully enabled (enabled {} out of {} requested)", enabledCount, requestedCount);
+		return FrameworkReturnCode::_ERROR_;
+	}
+	LOG_DEBUG("All requested sensors are succesfully enabled!")
+	return FrameworkReturnCode::_SUCCESS;
+}
+
 /// Deprecated
 FrameworkReturnCode SolARBuiltInSLAM::getLastCapture(std::vector<SRef<Image>> & frames, std::vector<PoseMatrix> & poses)
 {
@@ -303,16 +342,24 @@ FrameworkReturnCode SolARBuiltInSLAM::ReadCapture(SRef<Image> & frame, PoseMatri
 		LOG_DEBUG("Reader is empty, end of the stream");
 		return FrameworkReturnCode::_STOP;
 	}
-	// Reader as new data that we can process
-	if (sensorFrame.has_image())
+	else
 	{
-		frame = ParseImageRPC(sensorFrame.image());
+		// Reader as new data that we can process
+		if (sensorFrame.has_image())
+		{
+			frame = ParseImageRPC(sensorFrame.image());
+		}
+		else
+			LOG_WARNING("No image!");
+		if (sensorFrame.has_pose())
+		{
+			pose = ParsePoseRPC(sensorFrame.pose());
+		}
+		else
+			LOG_WARNING("No pose!");
+		return FrameworkReturnCode::_SUCCESS;
+
 	}
-	if (sensorFrame.has_pose())
-	{
-		pose = ParsePoseRPC(sensorFrame.pose());
-	}
-	return FrameworkReturnCode::_SUCCESS;
 }
 
 FrameworkReturnCode SolARBuiltInSLAM::RequestIntrinsicsFromDevice(const std::string & camera_name, CameraParameters & camParams)

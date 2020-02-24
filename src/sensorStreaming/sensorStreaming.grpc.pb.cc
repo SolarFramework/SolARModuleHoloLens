@@ -22,6 +22,7 @@
 namespace sensorStreaming {
 
 static const char* Streamer_method_names[] = {
+  "/sensorStreaming.Streamer/EnableSensors",
   "/sensorStreaming.Streamer/GetCamIntrinsics",
   "/sensorStreaming.Streamer/SensorStream",
 };
@@ -33,9 +34,38 @@ std::unique_ptr< Streamer::Stub> Streamer::NewStub(const std::shared_ptr< ::grpc
 }
 
 Streamer::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
-  : channel_(channel), rpcmethod_GetCamIntrinsics_(Streamer_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SensorStream_(Streamer_method_names[1], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  : channel_(channel), rpcmethod_EnableSensors_(Streamer_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetCamIntrinsics_(Streamer_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SensorStream_(Streamer_method_names[2], ::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   {}
+
+::grpc::Status Streamer::Stub::EnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC& request, ::sensorStreaming::SensorListRPC* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_EnableSensors_, context, request, response);
+}
+
+void Streamer::Stub::experimental_async::EnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC* request, ::sensorStreaming::SensorListRPC* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_EnableSensors_, context, request, response, std::move(f));
+}
+
+void Streamer::Stub::experimental_async::EnableSensors(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sensorStreaming::SensorListRPC* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_EnableSensors_, context, request, response, std::move(f));
+}
+
+void Streamer::Stub::experimental_async::EnableSensors(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC* request, ::sensorStreaming::SensorListRPC* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_EnableSensors_, context, request, response, reactor);
+}
+
+void Streamer::Stub::experimental_async::EnableSensors(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::sensorStreaming::SensorListRPC* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_EnableSensors_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensorStreaming::SensorListRPC>* Streamer::Stub::AsyncEnableSensorsRaw(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::sensorStreaming::SensorListRPC>::Create(channel_.get(), cq, rpcmethod_EnableSensors_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensorStreaming::SensorListRPC>* Streamer::Stub::PrepareAsyncEnableSensorsRaw(::grpc::ClientContext* context, const ::sensorStreaming::SensorListRPC& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::sensorStreaming::SensorListRPC>::Create(channel_.get(), cq, rpcmethod_EnableSensors_, context, request, false);
+}
 
 ::grpc::Status Streamer::Stub::GetCamIntrinsics(::grpc::ClientContext* context, const ::sensorStreaming::NameRPC& request, ::sensorStreaming::CameraIntrinsicsRPC* response) {
   return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_GetCamIntrinsics_, context, request, response);
@@ -85,16 +115,28 @@ Streamer::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Streamer_method_names[0],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< Streamer::Service, ::sensorStreaming::SensorListRPC, ::sensorStreaming::SensorListRPC>(
+          std::mem_fn(&Streamer::Service::EnableSensors), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      Streamer_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< Streamer::Service, ::sensorStreaming::NameRPC, ::sensorStreaming::CameraIntrinsicsRPC>(
           std::mem_fn(&Streamer::Service::GetCamIntrinsics), this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      Streamer_method_names[1],
+      Streamer_method_names[2],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< Streamer::Service, ::sensorStreaming::NameRPC, ::sensorStreaming::SensorFrameRPC>(
           std::mem_fn(&Streamer::Service::SensorStream), this)));
 }
 
 Streamer::Service::~Service() {
+}
+
+::grpc::Status Streamer::Service::EnableSensors(::grpc::ServerContext* context, const ::sensorStreaming::SensorListRPC* request, ::sensorStreaming::SensorListRPC* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
 ::grpc::Status Streamer::Service::GetCamIntrinsics(::grpc::ServerContext* context, const ::sensorStreaming::NameRPC* request, ::sensorStreaming::CameraIntrinsicsRPC* response) {
