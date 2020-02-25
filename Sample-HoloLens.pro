@@ -49,6 +49,7 @@ win32 {
 
 config_files.path = $${TARGETDEPLOYDIR}
 config_files.files = $$files($${PWD}/conf_Sample-HoloLens.xml)
+config_files.files = $$files($${PWD}/hololens_sensors_calibration.yml)
 
 INSTALLS += config_files
 

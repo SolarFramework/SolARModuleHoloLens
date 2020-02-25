@@ -25,6 +25,9 @@
 #include <vector>
 #include <set>
 #include <boost/log/core.hpp>
+#include <boost/thread/thread.hpp>
+#include "opencv2/core.hpp"
+#include "opencv2/imgproc.hpp"
 
 // ADD HERE: Module traits headers. #include "SolARModuleOpencv_traits.h"
 #include "SolARModuleHoloLens_traits.h"
@@ -42,6 +45,8 @@ using namespace SolAR::api;
 
 namespace xpcf = org::bcom::xpcf;
 
+static std::map<std::tuple<uint32_t, std::size_t, uint32_t>, int> solar2cvTypeConvertMap = { {std::make_tuple(8,1,3),CV_8UC3},{std::make_tuple(8,1,1),CV_8UC1} };
+
 Transform3Df fromPoseMatrix(PoseMatrix mat)
 {
 	Transform3Df t;
@@ -52,8 +57,25 @@ Transform3Df fromPoseMatrix(PoseMatrix mat)
 			t(i, j) = mat(i, j);
 		}
 	}
-
 	return t;
+}
+
+void rotateImg(SRef<Image> src, SRef<Image> dst)
+{
+	return;
+}
+
+int deduceOpenCVType(SRef<Image> img)
+{
+	// TODO : handle safe mode if missing map entry
+	// is it ok when destLayout != img->ImageLayout ?
+	return solar2cvTypeConvertMap.at(std::forward_as_tuple(img->getNbBitsPerComponent(), 1, img->getNbChannels()));
+}
+
+cv::Mat mapToOpenCV(SRef<Image> imgSrc)
+{
+	cv::Mat imgCV(imgSrc->getHeight(), imgSrc->getWidth(), deduceOpenCVType(imgSrc), imgSrc->data());
+	return imgCV;
 }
 
 // Main function
@@ -90,21 +112,45 @@ int main(int argc, char *argv[])
 		std::string camera_name = "vlc_lf";
 		CameraParameters camParams;
 
-		SRef<Image> frame;
-		PoseMatrix poseMat;
-        std::pair<SRef<Image>, PoseMatrix> framePose;
-		Transform3Df pose;
-
 		bool hasStartedCapture = false;
 
 		// Buffers
 		xpcf::DropBuffer<std::pair<SRef<Image>, PoseMatrix>>	m_dropBufferSensorCapture;
         xpcf::DropBuffer<SRef<Image>>							m_dropBufferDisplay;
 
+		clock_t captureStart, captureEnd;
+		captureEnd = clock();
+		float captureTargetFPS = 25.; // Imposed by currently selected sensor
+		int minCaptureTime = (int) 1. / captureTargetFPS * 1000.;
+		int captureTime;
+
 		// Main Loop
 		bool stop = false;
 		clock_t start, end;
         int count = 0;
+
+		////////////// TEMP ////////////////
+
+		float half_X = 0.1 * 0.5f;
+		float half_Y = 0.1 * 0.5f;
+		float half_Z = 0.1 * 0.5f;
+
+		Transform3Df transform;
+		transform.setIdentity();
+
+		std::vector<Vector4f> parallelepiped;
+
+		parallelepiped.push_back(transform * Vector4f(-half_X, -half_Y,  half_Z, 1.0f));
+		parallelepiped.push_back(transform * Vector4f( half_X, -half_Y,  half_Z, 1.0f));
+		parallelepiped.push_back(transform * Vector4f( half_X,  half_Y,  half_Z, 1.0f));
+		parallelepiped.push_back(transform * Vector4f(-half_X,  half_Y,  half_Z, 1.0f));
+		parallelepiped.push_back(transform * Vector4f(-half_X, -half_Y, -half_Z, 1.0f));
+		parallelepiped.push_back(transform * Vector4f( half_X, -half_Y, -half_Z, 1.0f));
+		parallelepiped.push_back(transform * Vector4f( half_X,  half_Y, -half_Z, 1.0f));
+		parallelepiped.push_back(transform * Vector4f(-half_X,  half_Y, -half_Z, 1.0f));
+
+		////////////// TEMP ////////////////
+
 
 	// ADD HERE: The pipeline initialization
 		LOG_INFO("Starting connection");
@@ -115,20 +161,38 @@ int main(int argc, char *argv[])
 			return -1;
 		}
 		LOG_INFO("Connection started!");
-		// Retrieve camera intrinsics parameters
+
+		//// Enable device sensors, and prepare them for streaming (WIP)
+		//std::vector<std::string> sensorList;
+		//sensorList.emplace_back("vlc_lf");
+		//sensorList.emplace_back("vlc_rf");
+		//if (slamHoloLens->EnableSensors(sensorList) == FrameworkReturnCode::_ERROR_)
+		//{
+		//	LOG_ERROR("Error when enabling sensors");
+		//	return -1;
+		//}
+		//LOG_INFO("Enabled sensors");
+
+		// Load camera intrinsics parameters
 		if (slamHoloLens->getIntrinsics(camera_name, camParams) == FrameworkReturnCode::_ERROR_)
 		{
-			LOG_ERROR("request failed");
+			LOG_ERROR("Failed to load {} intrinsics", camera_name);
 			return -1;
 		}
-		else
-			LOG_INFO("got intrinsics \n{}", camParams.intrinsic);
-		// Note: Camera distortion is assumed to be ideal coming from HoloLens sensors (undistortion is already performed internally)
-		//overlay3D->setCameraParameters(camParams.intrinsic, camParams.distorsion);
+		overlay3D->setCameraParameters(camParams.intrinsic, camParams.distorsion);
+		LOG_INFO("Loaded intrinsics \n{}\n\n{}", camParams.intrinsic, camParams.distorsion);
 
-		// Capture task
+		// Capture task (fps capped to sensor capabilities: here 25fps)
 		auto fnCapture = [&]()
 		{
+			// FPS limitation on capture thread
+			//captureStart = clock();
+			//captureTime = captureStart - captureEnd;
+			//if (captureTime < minCaptureTime)
+			//{
+			//	LOG_DEBUG("waiting for sensor {} ms", minCaptureTime - captureTime);
+			//	boost::this_thread::sleep(boost::posix_time::milliseconds(minCaptureTime - captureTime));
+			//}
 			//Init sensor capture
 			if (!hasStartedCapture)
 			{
@@ -142,8 +206,11 @@ int main(int argc, char *argv[])
 				LOG_DEBUG("Start streaming...");
 			}
 			// Read and update loop
-			FrameworkReturnCode status = slamHoloLens->ReadCapture(frame, poseMat);
-			LOG_DEBUG("Read capture done");
+			SRef<Image> frameCap;
+			PoseMatrix poseMatCap;
+			std::pair<SRef<Image>, PoseMatrix> framePose;
+			FrameworkReturnCode status = slamHoloLens->ReadCapture(frameCap, poseMatCap);
+			//LOG_DEBUG("Read capture done!");
 			switch (status)
 			{
 			case FrameworkReturnCode::_ERROR_:
@@ -151,8 +218,7 @@ int main(int argc, char *argv[])
 				stop = true;
 				break;
 			case FrameworkReturnCode::_SUCCESS:
-				framePose = std::make_pair(frame, poseMat);
-				LOG_DEBUG("\n{}", poseMat);
+				framePose = std::make_pair(frameCap, poseMatCap);
 				m_dropBufferSensorCapture.push(framePose);
 				break;
 			case FrameworkReturnCode::_STOP:
@@ -161,36 +227,68 @@ int main(int argc, char *argv[])
 				break;
 			}
 			count++;
+			captureEnd = clock();
 		};
 
 		// Process (draw pose on image)
 		auto fnProcess = [&]()
 		{
+			SRef<Image> frameProcess;
+			PoseMatrix poseMatProcess;
 			std::pair<SRef<Image>, PoseMatrix> sensorFrame;
 			if (!m_dropBufferSensorCapture.tryPop(sensorFrame))
 			{
 				xpcf::DelegateTask::yield();
 				return;
 			}
-			SRef<Image> frame = sensorFrame.first;
-			PoseMatrix poseMat = sensorFrame.second;
+			frameProcess = sensorFrame.first;
+			poseMatProcess = sensorFrame.second;
 
-			pose = fromPoseMatrix(poseMat);
-            // TO FIX
-            // overlay3D->draw(pose, frame);
-			m_dropBufferDisplay.push(frame);
+			Transform3Df pose = fromPoseMatrix(poseMatProcess);
+
+			// Manual overlay computation
+			PoseMatrix K;
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					K(i, j) = camParams.intrinsic(i, j);
+				}
+			}
+			K(3, 0) = 0; K(3, 1) = 0; K(3, 2) = 0; K(3, 3) = 1;
+			PoseMatrix P = K * poseMatProcess;
+
+			cv::Mat displayedImage;
+			displayedImage = mapToOpenCV(frameProcess);
+			Vector4f proj;
+			cv::Point2f uv;
+			for (auto point : parallelepiped)
+			{
+				proj = P * point;
+				if (proj(2) != 0)
+				{
+					uv.x = proj(0) / proj(2);
+					uv.y = proj(1) / proj(2);
+					if (0 <= uv.x && uv.x < displayedImage.cols && 0 <= uv.y && uv.y < displayedImage.rows)
+					{
+						circle(displayedImage, uv, 8, cv::Scalar(128, 0, 128), -1);
+					}
+				}
+			}
+            //overlay3D->draw(pose, frame);
+			m_dropBufferDisplay.push(frameProcess);
 		};
 
 		// Display task
 		auto fnDisplay = [&]()
 		{
-			SRef<Image> view;
-            if (!m_dropBufferDisplay.tryPop(view))
+			SRef<Image> frameDisplay;
+            if (!m_dropBufferDisplay.tryPop(frameDisplay))
 			{
 				xpcf::DelegateTask::yield();
 				return;
 			}
-			if (imageViewer->display(view) == SolAR::FrameworkReturnCode::_STOP)
+			if (imageViewer->display(frameDisplay) == SolAR::FrameworkReturnCode::_STOP)
 			{
 				stop = true;
 			}
