@@ -47,6 +47,9 @@ namespace xpcf = org::bcom::xpcf;
 
 static std::map<std::tuple<uint32_t, std::size_t, uint32_t>, int> solar2cvTypeConvertMap = { {std::make_tuple(8,1,3),CV_8UC3},{std::make_tuple(8,1,1),CV_8UC1} };
 
+static std::map<int, std::pair<Image::ImageLayout, Image::DataType>> cv2solarTypeConvertMap = { {CV_8UC3,{Image::ImageLayout::LAYOUT_BGR,Image::DataType::TYPE_8U}},
+																									  {CV_8UC1,{Image::ImageLayout::LAYOUT_GREY,Image::DataType::TYPE_8U}} };
+
 Transform3Df fromPoseMatrix(PoseMatrix mat)
 {
 	Transform3Df t;
@@ -60,9 +63,16 @@ Transform3Df fromPoseMatrix(PoseMatrix mat)
 	return t;
 }
 
-void rotateImg(SRef<Image> src, SRef<Image> dst)
+
+FrameworkReturnCode convertToSolar(cv::Mat&  imgSrc, SRef<Image>& imgDest)
 {
-	return;
+	if (cv2solarTypeConvertMap.find(imgSrc.type()) == cv2solarTypeConvertMap.end() || imgSrc.empty()) {
+		return FrameworkReturnCode::_ERROR_LOAD_IMAGE;
+	}
+	std::pair<Image::ImageLayout, Image::DataType> type = cv2solarTypeConvertMap.at(imgSrc.type());
+	imgDest = xpcf::utils::make_shared<Image>(imgSrc.ptr(), imgSrc.cols, imgSrc.rows, type.first, Image::PixelOrder::INTERLEAVED, type.second);
+
+	return FrameworkReturnCode::_SUCCESS;
 }
 
 int deduceOpenCVType(SRef<Image> img)
@@ -76,6 +86,25 @@ cv::Mat mapToOpenCV(SRef<Image> imgSrc)
 {
 	cv::Mat imgCV(imgSrc->getHeight(), imgSrc->getWidth(), deduceOpenCVType(imgSrc), imgSrc->data());
 	return imgCV;
+}
+
+void rotateImg(SRef<Image>& src, SRef<Image>& dst, int angle)
+{
+	// From https://stackoverflow.com/questions/22041699/rotate-an-image-without-cropping-in-opencv-in-c
+	cv::Mat img = mapToOpenCV(src);
+	// get rotation matrix for rotating the image around its center in pixel coordinates
+	cv::Point2f center((img.cols - 1) / 2.0, (img.rows - 1) / 2.0);
+	cv::Mat rot = cv::getRotationMatrix2D(center, angle, 1.0);
+	// determine bounding rectangle, center not relevant
+	cv::Rect2f bbox = cv::RotatedRect(cv::Point2f(), img.size(), angle).boundingRect2f();
+	// adjust transformation matrix
+	rot.at<double>(0, 2) += bbox.width / 2.0 - img.cols / 2.0;
+	rot.at<double>(1, 2) += bbox.height / 2.0 - img.rows / 2.0;
+
+	cv::Mat out;
+	cv::warpAffine(img, out, rot, bbox.size());
+	// Convert image back to SolAR
+	convertToSolar(out, dst);
 }
 
 // Main function
@@ -275,8 +304,12 @@ int main(int argc, char *argv[])
 					}
 				}
 			}
+			// Rotate 90°
+			SRef<Image> rotatedFrame;
+			rotateImg(frameProcess, rotatedFrame, -90);
+			//convertToSolar(displayedImage, rotatedFrame);
             //overlay3D->draw(pose, frame);
-			m_dropBufferDisplay.push(frameProcess);
+			m_dropBufferDisplay.push(rotatedFrame);
 		};
 
 		// Display task
