@@ -1,0 +1,2 @@
+SolARFramework|0.7.0|SolARFramework|SolARBuild@github|https://github.com/SolarFramework/SolarFramework/releases/download
+SolARModuleHoloLens|0.7.0|SolARModuleHoloLens|SolARBuild@github|https://github.com/SolarFramework/SolARModuleHoloLens/releases/download
