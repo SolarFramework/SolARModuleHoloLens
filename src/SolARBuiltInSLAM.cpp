@@ -79,10 +79,6 @@ PoseMatrix ParsePoseRPC(PoseRPC poseRPC)
 	PoseMatrix camView = ParseMatRPC(poseRPC.cameraview());
 	PoseMatrix frameToOrigin = ParseMatRPC(poseRPC.frametoorigin());
 
-	LOG_INFO("camProj\n{}", camProj);
-	LOG_INFO("camView\n{}", camView);
-	LOG_INFO("frameToOrigin\n{}", frameToOrigin);
-
 	PoseMatrix pose = PoseMatrix::Zero();
 	// cameraToImage flips Y and Z axis to comply with the output coordinate system.
 	PoseMatrix cameraToImage = PoseMatrix::Identity();
