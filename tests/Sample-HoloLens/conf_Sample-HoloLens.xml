@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<xpcf-registry autoAlias="true">
+
+        <module uuid="432dce25-0238-4c0a-85b3-276979cb85c0" name="SolARModuleHoloLens" path="$REMAKENROOT/packages/SolARBuild/win-cl-14.1/SolARModuleHoloLens/0.7.0/lib/x86_64/shared" description="Module for using HoloLens Research Mode sensors within SolAR">
+		<component uuid="b5f5f897-1f0e-4268-be2d-c344170690e8" name="SolARBuiltInSLAM" description="Component for retrieving data from a device that has a built-in SLAM capability">
+			<interface uuid="125f2007-1bf9-421d-9367-fbdc1210d006" name="IComponentIntrospect" description="IComponentIntrospect"/>
+			<interface uuid="999085e6-1d11-41a5-8cca-3daf4e02e941" name="IBuiltInSLAM" description="Interface for retrieving data from a device that has a built-in SLAM capability"/>
+		</component>
+	</module>
+        <module uuid="15e1990b-86b2-445c-8194-0cbe80ede970" name="SolARModuleOpenCV" path="$REMAKENROOT/packages/SolARBuild/win-cl-14.1/SolARModuleOpenCV/0.7.0/lib/x86_64/shared" description="OpenCV">
+		<component uuid="19ea4e13-7085-4e3f-92ca-93f200ffb01b" name="SolARImageViewerOpencv" description="SolARImageViewerOpencv">
+			<interface uuid="125f2007-1bf9-421d-9367-fbdc1210d006" name="IComponentIntrospect" description="IComponentIntrospect"/>
+			<interface uuid="b05f3dbb-f93d-465c-aee1-fb58e1480c42" name="IImageViewer" description="IImageViewer"/>
+		</component>
+		<component uuid="2db01f59-9793-4cd5-8e13-b25d0ed5735b" name="SolAR3DOverlayBoxOpencv" description="SolAR3DOverlayBoxOpencv">
+			<interface uuid="125f2007-1bf9-421d-9367-fbdc1210d006" name="IComponentIntrospect" description="IComponentIntrospect"/>
+			<interface uuid="81a20f52-6bf9-4949-b914-df2f614bc945" name="I3DOverlay" description="I3DOverlay"/>
+		</component>
+	</module>
+
+	<properties>
+		<configure component="SolARBuiltInSLAM">
+			<property name="deviceAddress" type="string" value="10.10.255.241:50051"/>
+			<property name="calibrationFile" type="string" value="hololens_sensors_calibration.yml"/>
+			<property name="isProxy" type="Integer" value="1"/>
+		</configure>
+		<configure component="SolARImageViewerOpencv">
+			<property name="title" type="string" value="Sample-HoloLens"/>
+			<property name="exitKey" type="Integer" value="27"/>
+			<property name="width" type="Integer" value="0"/>
+			<property name="height" type="Integer" value="0"/>
+		</configure>
+		<configure component="SolAR3DOverlayBoxOpencv">
+			<property name="position" type="Float">
+				<value>0</value>
+				<value>0</value>
+				<value>0</value>
+			</property>
+			<property name="orientation" type="Float">
+				<value>0.0</value>
+				<value>0.0</value>
+				<value>0.0</value>
+			</property>
+			<property name="size" type="Float">
+				<value>0.182</value>
+				<value>0.182</value>
+				<value>0.182</value>
+			</property>
+		</configure>
+	</properties>
+
+</xpcf-registry>

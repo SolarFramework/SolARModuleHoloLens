@@ -70,8 +70,10 @@ doc/
 doxygen/
 
 
-bcom-SolARModuleHoloLens.pc
-SolARModuleHoloLens-InstallDependencies_debug.bat
-SolARModuleHoloLens-Installvclib-debug.bat
-SolARModuleHoloLens-Installvclib-release.bat
-SolARModuleHoloLens-InstallDependencies_release.bat
+*.pc
+*-InstallDependencies_debug.bat
+*-Installvclib-debug.bat
+*-Installvclib-release.bat
+*-InstallDependencies_release.bat
+*-Installvcapp-debug.bat
+*-Installvcapp-release.bat

@@ -1,0 +1,18 @@
+%YAML:1.0
+---
+vlc_lf:
+    image_width: 480
+    image_height: 640
+    camera_matrix: !!opencv-matrix
+        rows: 3
+        cols: 3
+        dt: d
+        data: [ 448.189452, 0., 320.,
+                0., 452.478090, 240.,
+                0.,          0.,   1. ]
+        
+    distortion_coefficients: !!opencv-matrix
+        rows: 5
+        cols: 1
+        dt: d
+        data: [ -0.009463, 0.003013, -0.006169, -0.008975, 0 ]
