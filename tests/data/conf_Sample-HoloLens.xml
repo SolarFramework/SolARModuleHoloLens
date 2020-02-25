@@ -20,7 +20,7 @@
 
 	<properties>
 		<configure component="SolARBuiltInSLAM">
-			<property name="deviceAddress" type="string" value="10.10.255.241:50051"/>
+			<property name="deviceAddress" type="string" value="0.0.0.0:50051"/>
 			<property name="calibrationFile" type="string" value="hololens_sensors_calibration.yml"/>
 			<property name="isProxy" type="Integer" value="1"/>
 		</configure>
