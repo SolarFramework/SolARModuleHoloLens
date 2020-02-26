@@ -1,6 +1,7 @@
 #include "SolARBuiltInSLAM.h"
 
 #include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
 
 #include <core/Log.h>
 
@@ -44,9 +45,15 @@ CamCalibration ParseCameraIntrinsicsRPC(CameraIntrinsicsRPC camIntrinsics)
 
 SRef<Image> ParseImageRPC(ImageRPC imageRPC)
 {
-	SRef<Image> imgDest;
+	SRef<Image> imgSrc;
 	uint8_t* dataPointer = (uint8_t*) imageRPC.data().c_str();
-	imgDest = xpcf::utils::make_shared<Image>(dataPointer, imageRPC.width(), imageRPC.height(), Image::ImageLayout::LAYOUT_GREY, Image::PixelOrder::INTERLEAVED, Image::DataType::TYPE_8U);
+	imgSrc = xpcf::utils::make_shared<Image>(dataPointer, imageRPC.width(), imageRPC.height(), Image::ImageLayout::LAYOUT_GREY, Image::PixelOrder::INTERLEAVED, Image::DataType::TYPE_8U);
+	// Convert from grayscale to RGB using OpenCV
+	cv::Mat imgGray(imgSrc->getHeight(), imgSrc->getWidth(), CV_8UC1, imgSrc->data());
+	cv::Mat imgColor;
+	cv::cvtColor(imgGray, imgColor, cv::COLOR_GRAY2RGB);
+	SRef<Image> imgDest;
+	imgDest = xpcf::utils::make_shared<Image>(imgColor.ptr(), imgColor.cols, imgColor.rows, Image::ImageLayout::LAYOUT_RGB, Image::PixelOrder::INTERLEAVED, Image::DataType::TYPE_8U);
 	return imgDest;
 }
 
@@ -94,7 +101,7 @@ PoseMatrix ParsePoseRPC(PoseRPC poseRPC)
 	}
 	else
 	{
-		LOG_WARNING("Matrix not invertible, invalid pose")
+		LOG_WARNING("Matrix not invertible, invalid pose");
 	}
 	return pose;
 }
