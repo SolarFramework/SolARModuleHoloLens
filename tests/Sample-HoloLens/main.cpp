@@ -63,7 +63,6 @@ Transform3Df fromPoseMatrix(PoseMatrix mat)
 	return t;
 }
 
-
 FrameworkReturnCode convertToSolar(cv::Mat&  imgSrc, SRef<Image>& imgDest)
 {
 	if (cv2solarTypeConvertMap.find(imgSrc.type()) == cv2solarTypeConvertMap.end() || imgSrc.empty()) {
@@ -147,12 +146,6 @@ int main(int argc, char *argv[])
 		xpcf::DropBuffer<std::pair<SRef<Image>, PoseMatrix>>	m_dropBufferSensorCapture;
         xpcf::DropBuffer<SRef<Image>>							m_dropBufferDisplay;
 
-		clock_t captureStart, captureEnd;
-		captureEnd = clock();
-		float captureTargetFPS = 25.; // Imposed by currently selected sensor
-		int minCaptureTime = (int) 1. / captureTargetFPS * 1000.;
-		int captureTime;
-
 		// Main Loop
 		bool stop = false;
 		clock_t start, end;
@@ -211,17 +204,9 @@ int main(int argc, char *argv[])
 		overlay3D->setCameraParameters(camParams.intrinsic, camParams.distorsion);
 		LOG_INFO("Loaded intrinsics \n{}\n\n{}", camParams.intrinsic, camParams.distorsion);
 
-		// Capture task (fps capped to sensor capabilities: here 25fps)
+		// Capture task
 		auto fnCapture = [&]()
 		{
-			// FPS limitation on capture thread
-			//captureStart = clock();
-			//captureTime = captureStart - captureEnd;
-			//if (captureTime < minCaptureTime)
-			//{
-			//	LOG_DEBUG("waiting for sensor {} ms", minCaptureTime - captureTime);
-			//	boost::this_thread::sleep(boost::posix_time::milliseconds(minCaptureTime - captureTime));
-			//}
 			//Init sensor capture
 			if (!hasStartedCapture)
 			{
@@ -239,7 +224,6 @@ int main(int argc, char *argv[])
 			PoseMatrix poseMatCap;
 			std::pair<SRef<Image>, PoseMatrix> framePose;
 			FrameworkReturnCode status = slamHoloLens->ReadCapture(frameCap, poseMatCap);
-			//LOG_DEBUG("Read capture done!");
 			switch (status)
 			{
 			case FrameworkReturnCode::_ERROR_:
@@ -256,7 +240,6 @@ int main(int argc, char *argv[])
 				break;
 			}
 			count++;
-			captureEnd = clock();
 		};
 
 		// Process (draw pose on image)
@@ -304,7 +287,7 @@ int main(int argc, char *argv[])
 					}
 				}
 			}
-			// Rotate 90°
+			// Rotate 90 degrees
 			SRef<Image> rotatedFrame;
 			rotateImg(frameProcess, rotatedFrame, -90);
 			//convertToSolar(displayedImage, rotatedFrame);
