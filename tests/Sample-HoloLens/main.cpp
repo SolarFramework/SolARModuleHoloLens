@@ -153,23 +153,23 @@ int main(int argc, char *argv[])
 
 		////////////// TEMP ////////////////
 
-		float half_X = 0.1 * 0.5f;
-		float half_Y = 0.1 * 0.5f;
-		float half_Z = 0.1 * 0.5f;
+		float half_X = 0.05f;
+		float half_Y = 0.05f;
+		float Z = 0.1f;
 
 		Transform3Df transform;
 		transform.setIdentity();
 
 		std::vector<Vector4f> parallelepiped;
 
-		parallelepiped.push_back(transform * Vector4f(-half_X, -half_Y,  half_Z, 1.0f));
-		parallelepiped.push_back(transform * Vector4f( half_X, -half_Y,  half_Z, 1.0f));
-		parallelepiped.push_back(transform * Vector4f( half_X,  half_Y,  half_Z, 1.0f));
-		parallelepiped.push_back(transform * Vector4f(-half_X,  half_Y,  half_Z, 1.0f));
-		parallelepiped.push_back(transform * Vector4f(-half_X, -half_Y, -half_Z, 1.0f));
-		parallelepiped.push_back(transform * Vector4f( half_X, -half_Y, -half_Z, 1.0f));
-		parallelepiped.push_back(transform * Vector4f( half_X,  half_Y, -half_Z, 1.0f));
-		parallelepiped.push_back(transform * Vector4f(-half_X,  half_Y, -half_Z, 1.0f));
+		parallelepiped.push_back(transform * Vector4f(-half_X, -half_Y, 0.0f, 1.0f));
+		parallelepiped.push_back(transform * Vector4f( half_X, -half_Y, 0.0f, 1.0f));
+		parallelepiped.push_back(transform * Vector4f( half_X,  half_Y, 0.0f, 1.0f));
+		parallelepiped.push_back(transform * Vector4f(-half_X,  half_Y, 0.0f, 1.0f));
+		parallelepiped.push_back(transform * Vector4f(-half_X, -half_Y, -Z, 1.0f));
+		parallelepiped.push_back(transform * Vector4f( half_X, -half_Y, -Z, 1.0f));
+		parallelepiped.push_back(transform * Vector4f( half_X,  half_Y, -Z, 1.0f));
+		parallelepiped.push_back(transform * Vector4f(-half_X,  half_Y, -Z, 1.0f));
 
 		////////////// TEMP ////////////////
 
@@ -184,16 +184,16 @@ int main(int argc, char *argv[])
 		}
 		LOG_INFO("Connection started!");
 
-		//// Enable device sensors, and prepare them for streaming (WIP)
-		//std::vector<std::string> sensorList;
-		//sensorList.emplace_back("vlc_lf");
-		//sensorList.emplace_back("vlc_rf");
-		//if (slamHoloLens->EnableSensors(sensorList) == FrameworkReturnCode::_ERROR_)
-		//{
-		//	LOG_ERROR("Error when enabling sensors");
-		//	return -1;
-		//}
-		//LOG_INFO("Enabled sensors");
+		// Enable device sensors, and prepare them for streaming (WIP)
+		std::vector<std::string> sensorList;
+		sensorList.emplace_back("vlc_lf");
+		sensorList.emplace_back("vlc_rf");
+		if (slamHoloLens->EnableSensors(sensorList) == FrameworkReturnCode::_ERROR_)
+		{
+			LOG_ERROR("Error when enabling sensors");
+			return -1;
+		}
+		LOG_INFO("Enabled sensors");
 
 		// Load camera intrinsics parameters
 		if (slamHoloLens->getIntrinsics(camera_name, camParams) == FrameworkReturnCode::_ERROR_)
@@ -232,6 +232,7 @@ int main(int argc, char *argv[])
 				break;
 			case FrameworkReturnCode::_SUCCESS:
 				framePose = std::make_pair(frameCap, poseMatCap);
+                LOG_DEBUG("\n{}", poseMatCap);
 				m_dropBufferSensorCapture.push(framePose);
 				break;
 			case FrameworkReturnCode::_STOP:
@@ -267,9 +268,11 @@ int main(int argc, char *argv[])
 					K(i, j) = camParams.intrinsic(i, j);
 				}
 			}
+			K(0, 3) = 0; K(1, 3) = 0; K(2, 3) = 0;
 			K(3, 0) = 0; K(3, 1) = 0; K(3, 2) = 0; K(3, 3) = 1;
 			PoseMatrix P = K * poseMatProcess;
-
+			LOG_DEBUG("K\n{}", K);
+			LOG_DEBUG("P\n{}", P);
 			cv::Mat displayedImage;
 			displayedImage = mapToOpenCV(frameProcess);
 			Vector4f proj;
@@ -281,17 +284,19 @@ int main(int argc, char *argv[])
 				{
 					uv.x = proj(0) / proj(2);
 					uv.y = proj(1) / proj(2);
+					LOG_DEBUG("\nx: {}, y: {}", uv.x, uv.y);
 					if (0 <= uv.x && uv.x < displayedImage.cols && 0 <= uv.y && uv.y < displayedImage.rows)
 					{
 						circle(displayedImage, uv, 8, cv::Scalar(128, 0, 128), -1);
 					}
 				}
 			}
+            overlay3D->draw(pose, frameProcess);
+
 			// Rotate 90 degrees
 			SRef<Image> rotatedFrame;
 			rotateImg(frameProcess, rotatedFrame, -90);
-			//convertToSolar(displayedImage, rotatedFrame);
-            //overlay3D->draw(pose, frame);
+			// Push to display buffer
 			m_dropBufferDisplay.push(rotatedFrame);
 		};
 
