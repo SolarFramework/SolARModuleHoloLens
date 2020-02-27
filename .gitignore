@@ -69,7 +69,7 @@ x64*
 doc/
 doxygen/
 
-
+bin/
 *.pc
 *-InstallDependencies_debug.bat
 *-Installvclib-debug.bat
