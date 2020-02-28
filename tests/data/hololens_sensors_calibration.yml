@@ -1,5 +1,21 @@
 %YAML:1.0
 ---
+vlc_ll:
+    image_width: 480
+    image_height: 640
+    camera_matrix: !!opencv-matrix
+        rows: 3
+        cols: 3
+        dt: d
+        data: [ 450.072070, 0., 320.,
+                0., 450.274345, 240.,
+                0.,         0.,   1. ]
+    distortion_coefficients: !!opencv-matrix
+        rows: 5
+        cols: 1
+        dt: d
+        data: [ -0.013211, 0.012778, -0.002714, -0.003603, 0. ]
+
 vlc_lf:
     image_width: 480
     image_height: 640
@@ -9,10 +25,41 @@ vlc_lf:
         dt: d
         data: [ 448.189452, 0., 320.,
                 0., 452.478090, 240.,
-                0.,          0.,   1. ]
-        
+                0.,         0.,   1. ]
     distortion_coefficients: !!opencv-matrix
         rows: 5
         cols: 1
         dt: d
-        data: [ -0.009463, 0.003013, -0.006169, -0.008975, 0 ]
+        data: [ -0.009463, 0.003013, -0.006169, -0.008975, 0. ]
+
+vlc_rf:
+    image_width: 480
+    image_height: 640
+    camera_matrix: !!opencv-matrix
+        rows: 3
+        cols: 3
+        dt: d
+        data: [ 449.435779, 0., 320.,
+                0., 453.332057, 240.,
+                0.,         0.,   1. ]
+    distortion_coefficients: !!opencv-matrix
+        rows: 5
+        cols: 1
+        dt: d
+        data: [ -0.000305, -0.013207, 0.003258, 0.001051, 0. ]
+
+vlc_rr:
+    image_width: 480
+    image_height: 640
+    camera_matrix: !!opencv-matrix
+        rows: 3
+        cols: 3
+        dt: d
+        data: [ 450.301002, 0., 320.,
+                0., 450.244147, 240.,
+                0.,         0.,   1. ]
+    distortion_coefficients: !!opencv-matrix
+        rows: 5
+        cols: 1
+        dt: d
+        data: [ -0.010926, 0.008377, -0.003105, -0.004976, 0. ]
