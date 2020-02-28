@@ -53,21 +53,17 @@ static std::map<int, std::pair<Image::ImageLayout, Image::DataType>> cv2solarTyp
 Transform3Df fromPoseMatrix(PoseMatrix mat)
 {
 	Transform3Df t;
-	for (int i; i < 4; i++)
-	{
-		for (int j; j < 4; j++)
-		{
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
 			t(i, j) = mat(i, j);
-		}
-	}
-	return t;
+	return t.inverse();
 }
 
 FrameworkReturnCode convertToSolar(cv::Mat&  imgSrc, SRef<Image>& imgDest)
 {
-	if (cv2solarTypeConvertMap.find(imgSrc.type()) == cv2solarTypeConvertMap.end() || imgSrc.empty()) {
+	if (cv2solarTypeConvertMap.find(imgSrc.type()) == cv2solarTypeConvertMap.end() || imgSrc.empty())
 		return FrameworkReturnCode::_ERROR_LOAD_IMAGE;
-	}
+
 	std::pair<Image::ImageLayout, Image::DataType> type = cv2solarTypeConvertMap.at(imgSrc.type());
 	imgDest = xpcf::utils::make_shared<Image>(imgSrc.ptr(), imgSrc.cols, imgSrc.rows, type.first, Image::PixelOrder::INTERLEAVED, type.second);
 
@@ -109,7 +105,6 @@ void rotateImg(SRef<Image>& src, SRef<Image>& dst, int angle)
 // Main function
 int main(int argc, char *argv[])
 {
-
 #if NDEBUG
     boost::log::core::get()->set_logging_enabled(false);
 #endif
@@ -129,8 +124,6 @@ int main(int argc, char *argv[])
         LOG_INFO("Start creating components");
 
 	// ADD HERE: instantiate concrete components and bind them to abstract component interfaces
-		// e.g. SRef<image::ICamera> camera = xpcfComponentManager->resolve<image::ICamera>();
-		//SRef<input::devices::IBuiltInSLAM> slamHoloLens;
 		auto slamHoloLens = xpcfComponentManager->resolve<input::devices::IBuiltInSLAM>();
         auto imageViewer = xpcfComponentManager->resolve<display::IImageViewer>();
 		auto overlay3D = xpcfComponentManager->resolve<display::I3DOverlay>();
@@ -151,29 +144,6 @@ int main(int argc, char *argv[])
 		clock_t start, end;
         int count = 0;
 
-		////////////// TEMP ////////////////
-
-		float half_X = 0.05f;
-		float half_Y = 0.05f;
-		float Z = 0.1f;
-
-		Transform3Df transform;
-		transform.setIdentity();
-
-		std::vector<Vector4f> parallelepiped;
-
-		parallelepiped.push_back(transform * Vector4f(-half_X, -half_Y, 0.0f, 1.0f));
-		parallelepiped.push_back(transform * Vector4f( half_X, -half_Y, 0.0f, 1.0f));
-		parallelepiped.push_back(transform * Vector4f( half_X,  half_Y, 0.0f, 1.0f));
-		parallelepiped.push_back(transform * Vector4f(-half_X,  half_Y, 0.0f, 1.0f));
-		parallelepiped.push_back(transform * Vector4f(-half_X, -half_Y, -Z, 1.0f));
-		parallelepiped.push_back(transform * Vector4f( half_X, -half_Y, -Z, 1.0f));
-		parallelepiped.push_back(transform * Vector4f( half_X,  half_Y, -Z, 1.0f));
-		parallelepiped.push_back(transform * Vector4f(-half_X,  half_Y, -Z, 1.0f));
-
-		////////////// TEMP ////////////////
-
-
 	// ADD HERE: The pipeline initialization
 		LOG_INFO("Starting connection");
 		// Connect remotely to the HoloLens streaming app
@@ -184,7 +154,7 @@ int main(int argc, char *argv[])
 		}
 		LOG_INFO("Connection started!");
 
-		// Enable device sensors, and prepare them for streaming (WIP)
+		// Enable device sensors, and prepare them for streaming
 		std::vector<std::string> sensorList;
 		sensorList.emplace_back("vlc_lf");
 		sensorList.emplace_back("vlc_rf");
@@ -232,7 +202,6 @@ int main(int argc, char *argv[])
 				break;
 			case FrameworkReturnCode::_SUCCESS:
 				framePose = std::make_pair(frameCap, poseMatCap);
-                LOG_DEBUG("\n{}", poseMatCap);
 				m_dropBufferSensorCapture.push(framePose);
 				break;
 			case FrameworkReturnCode::_STOP:
@@ -246,53 +215,21 @@ int main(int argc, char *argv[])
 		// Process (draw pose on image)
 		auto fnProcess = [&]()
 		{
-			SRef<Image> frameProcess;
-			PoseMatrix poseMatProcess;
 			std::pair<SRef<Image>, PoseMatrix> sensorFrame;
 			if (!m_dropBufferSensorCapture.tryPop(sensorFrame))
 			{
 				xpcf::DelegateTask::yield();
 				return;
 			}
-			frameProcess = sensorFrame.first;
-			poseMatProcess = sensorFrame.second;
+			SRef<Image> frameProcess = sensorFrame.first;
+			PoseMatrix poseMatProcess = sensorFrame.second;
 
+			// Convert HoloLens pose to SolAR pose
 			Transform3Df pose = fromPoseMatrix(poseMatProcess);
+			LOG_DEBUG("SolAR pose\n{}", poseMatProcess.inverse());
 
-			// Manual overlay computation
-			PoseMatrix K;
-			for (int i = 0; i < 3; i++)
-			{
-				for (int j = 0; j < 3; j++)
-				{
-					K(i, j) = camParams.intrinsic(i, j);
-				}
-			}
-			K(0, 3) = 0; K(1, 3) = 0; K(2, 3) = 0;
-			K(3, 0) = 0; K(3, 1) = 0; K(3, 2) = 0; K(3, 3) = 1;
-			PoseMatrix P = K * poseMatProcess;
-			LOG_DEBUG("K\n{}", K);
-			LOG_DEBUG("P\n{}", P);
-			cv::Mat displayedImage;
-			displayedImage = mapToOpenCV(frameProcess);
-			Vector4f proj;
-			cv::Point2f uv;
-			for (auto point : parallelepiped)
-			{
-				proj = P * point;
-				if (proj(2) != 0)
-				{
-					uv.x = proj(0) / proj(2);
-					uv.y = proj(1) / proj(2);
-					LOG_DEBUG("\nx: {}, y: {}", uv.x, uv.y);
-					if (0 <= uv.x && uv.x < displayedImage.cols && 0 <= uv.y && uv.y < displayedImage.rows)
-					{
-						circle(displayedImage, uv, 8, cv::Scalar(128, 0, 128), -1);
-					}
-				}
-			}
+			// Draw pose
             overlay3D->draw(pose, frameProcess);
-
 			// Rotate 90 degrees
 			SRef<Image> rotatedFrame;
 			rotateImg(frameProcess, rotatedFrame, -90);
@@ -310,9 +247,7 @@ int main(int argc, char *argv[])
 				return;
 			}
 			if (imageViewer->display(frameDisplay) == SolAR::FrameworkReturnCode::_STOP)
-			{
 				stop = true;
-			}
 		};
 
 		// Instantiate and start tasks
@@ -344,6 +279,5 @@ int main(int argc, char *argv[])
         LOG_ERROR("{}", e.what());
 		return -1;
 	}
-
     return 0;
 }
