@@ -65,7 +65,7 @@ public:
     /// @return FrameworkReturnCode::_SUCCESS if successful, eiher FrameworkReturnCode::_ERROR_.
     FrameworkReturnCode stop() override;
 
-	FrameworkReturnCode EnableSensors(std::vector<std::string> sensorList) override;
+	FrameworkReturnCode EnableSensors() override;
 
     /// @brief Fill frames and poses vectors containing latest sensors data from the device.
     /// @return FrameworkReturnCode to track successful or failing event.
@@ -105,6 +105,8 @@ private:
 	std::unique_ptr<grpc::ClientReader<SensorFrameRPC>> m_reader;
 	bool m_isClientConnected;
 
+	std::string m_sensors;
+	//std::vector<std::string> m_sensorList = { "vlc_ll", "vlc_lf", "vlc_rf" , "vlc_rr" };
 	std::vector<std::string> m_sensorList;
 	std::vector<CameraParameters> m_camParameters;
 

@@ -23,6 +23,7 @@
 			<property name="deviceAddress" type="string" value="0.0.0.0:50051"/>
 			<property name="calibrationFile" type="string" value="hololens_sensors_calibration.yml"/>
 			<property name="isProxy" type="Integer" value="1"/>
+			<property name="sensorList" type="string" value="vlc_ll;vlc_lf;vlc_rf;vlc_rr"/>
 		</configure>
 		<configure component="SolARImageViewerOpencv">
 			<property name="title" type="string" value="Sample-HoloLens"/>
@@ -42,9 +43,9 @@
 				<value>0.0</value>
 			</property>
 			<property name="size" type="Float">
-				<value>0.182</value>
-				<value>0.182</value>
-				<value>0.182</value>
+				<value>0.1</value>
+				<value>0.1</value>
+				<value>0.1</value>
 			</property>
 		</configure>
 	</properties>

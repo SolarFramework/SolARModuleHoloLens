@@ -15,20 +15,11 @@
  */
 
 // Common headers
-#include "xpcf/xpcf.h"
-#include "xpcf/threading/BaseTask.h"
-#include "xpcf/threading/DropBuffer.h"
-#include "core/Log.h"
-
-#include <iostream>
-#include <string>
-#include <vector>
-#include <set>
+#include <xpcf/xpcf.h>
+#include <xpcf/threading/BaseTask.h>
+#include <xpcf/threading/DropBuffer.h>
+#include <core/Log.h>
 #include <boost/log/core.hpp>
-#include <boost/thread/thread.hpp>
-#include "opencv2/core.hpp"
-#include "opencv2/imgproc.hpp"
-#include "SolARHoloLensHelper.h"
 
 // ADD HERE: Module traits headers. #include "SolARModuleOpencv_traits.h"
 #include "SolARModuleHoloLens_traits.h"
@@ -39,11 +30,14 @@
 #include "api/display/IImageViewer.h"
 #include "api/display/I3DOverlay.h"
 
+#include "SolARHoloLensHelper.h"
+
 // Namespaces
 using namespace SolAR;
 using namespace SolAR::datastructure;
 using namespace SolAR::api;
 using SolAR::MODULES::HOLOLENS::SolARHoloLensHelper;
+
 namespace xpcf = org::bcom::xpcf;
 
 // Main function
@@ -74,7 +68,11 @@ int main(int argc, char *argv[])
 
         LOG_INFO("Components created!");
 	// ADD HERE: Declare here the data structures used to connect components
-		std::string camera_name = "vlc_lf";
+		std::string camera_name;
+		if (argc > 1)
+			camera_name = argv[1];
+		else
+			camera_name = "vlc_lf";
 		CameraParameters camParams;
 
 		bool hasStartedCapture = false;
@@ -89,7 +87,7 @@ int main(int argc, char *argv[])
         int count = 0;
 
 	// ADD HERE: The pipeline initialization
-		LOG_INFO("Starting connection");
+		LOG_INFO("Starting remote connection");
 		// Connect remotely to the HoloLens streaming app
 		if (slamHoloLens->start() == FrameworkReturnCode::_ERROR_)
 		{
@@ -97,17 +95,6 @@ int main(int argc, char *argv[])
 			return -1;
 		}
 		LOG_INFO("Connection started!");
-
-		// Enable device sensors, and prepare them for streaming
-		std::vector<std::string> sensorList;
-		sensorList.emplace_back("vlc_lf");
-		sensorList.emplace_back("vlc_rf");
-		if (slamHoloLens->EnableSensors(sensorList) == FrameworkReturnCode::_ERROR_)
-		{
-			LOG_ERROR("Error when enabling sensors");
-			return -1;
-		}
-		LOG_INFO("Enabled sensors");
 
 		// Load camera intrinsics parameters
 		if (slamHoloLens->getIntrinsics(camera_name, camParams) == FrameworkReturnCode::_ERROR_)
@@ -117,6 +104,14 @@ int main(int argc, char *argv[])
 		}
 		overlay3D->setCameraParameters(camParams.intrinsic, camParams.distorsion);
 		LOG_INFO("Loaded intrinsics \n{}\n\n{}", camParams.intrinsic, camParams.distorsion);
+
+		// Enable device sensors, and prepare them for streaming
+		if (slamHoloLens->EnableSensors() == FrameworkReturnCode::_ERROR_)
+		{
+			LOG_ERROR("Error when enabling sensors");
+			return -1;
+		}
+		LOG_INFO("Enabled sensors");
 
 		// Capture task
 		auto fnCapture = [&]()

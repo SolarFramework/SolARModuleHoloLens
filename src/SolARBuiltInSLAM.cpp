@@ -1,8 +1,7 @@
 #include "SolARBuiltInSLAM.h"
 #include "SolARHoloLensHelper.h"
 
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include <core/Log.h>
 
@@ -23,6 +22,7 @@ SolARBuiltInSLAM::SolARBuiltInSLAM() : ConfigurableBase(xpcf::toUUID<SolARBuiltI
 	declareProperty<std::string>("deviceAddress", m_deviceAddress);
 	declareProperty<std::string>("calibrationFile", m_calibrationFile);
 	declareProperty<int>("isProxy", m_isProxy);
+	declareProperty<std::string>("sensorList", m_sensors);
 }
 
 SolARBuiltInSLAM::~SolARBuiltInSLAM()
@@ -33,7 +33,9 @@ SolARBuiltInSLAM::~SolARBuiltInSLAM()
 xpcf::XPCFErrorCode SolARBuiltInSLAM::onConfigured()
 {
 	m_isClientConnected = false;
-	m_sensorList.emplace_back("vlc_lf");
+
+	LOG_DEBUG("{}", m_sensors);
+	boost::split(m_sensorList, m_sensors, [](char c) {return c == ';'; });
 
 	if (m_calibrationFile.empty())
 	{
@@ -91,6 +93,7 @@ xpcf::XPCFErrorCode SolARBuiltInSLAM::onConfigured()
 				return xpcf::_FAIL;
 			}
 			m_camParameters.emplace_back(camParams);
+			LOG_DEBUG("Loaded {} intrinsics", sensor);
 		}
 		return xpcf::_SUCCESS;
 	}
@@ -119,7 +122,7 @@ FrameworkReturnCode SolARBuiltInSLAM::start()
 		LOG_ERROR("Can't initiate channel connection to device at {}", m_deviceAddress);
 		return FrameworkReturnCode::_ERROR_;
 	}
-	LOG_DEBUG("gRPC client successfully connected to device");
+	LOG_DEBUG("gRPC client successfully started");
 	m_isClientConnected = true;
 	return FrameworkReturnCode::_SUCCESS;
 }
@@ -133,7 +136,7 @@ FrameworkReturnCode SolARBuiltInSLAM::stop()
 	return FrameworkReturnCode::_SUCCESS;
 }
 
-FrameworkReturnCode SolARBuiltInSLAM::EnableSensors(std::vector<std::string> sensorList)
+FrameworkReturnCode SolARBuiltInSLAM::EnableSensors()
 {
 	if (!m_isClientConnected)
 	{
@@ -143,7 +146,7 @@ FrameworkReturnCode SolARBuiltInSLAM::EnableSensors(std::vector<std::string> sen
 
 	SensorListRPC enableRequest;
 	NameRPC* newSensor;
-	for (auto sensor : sensorList)
+	for (auto sensor : m_sensorList)
 	{
 		newSensor = enableRequest.add_sensor();
 		newSensor->set_cameraname(sensor);
@@ -164,7 +167,7 @@ FrameworkReturnCode SolARBuiltInSLAM::EnableSensors(std::vector<std::string> sen
 		LOG_ERROR("Some sensors could not be successfully enabled (enabled {} out of {} requested)", enabledCount, requestedCount);
 		return FrameworkReturnCode::_ERROR_;
 	}
-	LOG_DEBUG("All requested sensors are succesfully enabled!")
+	LOG_DEBUG("All requested sensors are succesfully enabled!");
 	return FrameworkReturnCode::_SUCCESS;
 }
 
