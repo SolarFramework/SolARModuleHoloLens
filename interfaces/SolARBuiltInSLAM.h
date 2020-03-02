@@ -69,7 +69,7 @@ public:
 
     /// @brief Fill frames and poses vectors containing latest sensors data from the device.
     /// @return FrameworkReturnCode to track successful or failing event.
-    FrameworkReturnCode getLastCapture(std::vector<SRef<Image>> & frames, std::vector<PoseMatrix> & poses) override;
+    FrameworkReturnCode getLastCapture(std::vector<SRef<Image>> & frames, std::vector<Transform3Df> & poses) override;
 
     /// @brief Retrieve the sensors intrinsic parameters. (assuming all sensors are cameras, ie no IMU)
     /// @return FrameworkReturnCode to track successful or failing event.
@@ -78,7 +78,7 @@ public:
 
 	FrameworkReturnCode RequestCapture(const std::string & camera_name) override;
 
-	FrameworkReturnCode ReadCapture(SRef<Image> & frame, PoseMatrix & pose) override;
+	FrameworkReturnCode ReadCapture(SRef<Image> & frame, Transform3Df & pose) override;
 
     /// @brief Whether or not the device is simulated or online.
     /// @return True is the device is online, False is simulated.

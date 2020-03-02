@@ -1,9 +1,12 @@
 #include "SolARBuiltInSLAM.h"
+#include "SolARHoloLensHelper.h"
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
 #include <core/Log.h>
+
+using SolAR::MODULES::HOLOLENS::SolARHoloLensHelper;
 
 namespace xpcf = org::bcom::xpcf;
 
@@ -13,98 +16,6 @@ namespace SolAR {
 using namespace datastructure;
 namespace MODULES {
 namespace HOLOLENS {
-
-std::string ParseNameRPC(NameRPC name)
-{
-	return name.cameraname();
-}
-
-const NameRPC MakeNameRPC(std::string cameraName)
-{
-	NameRPC name;
-	name.set_cameraname(cameraName);
-	return name;
-}
-
-CamCalibration ParseCameraIntrinsicsRPC(CameraIntrinsicsRPC camIntrinsics)
-{
-	float fx = camIntrinsics.fx();
-	float fy = camIntrinsics.fy();
-	float cx = camIntrinsics.cx();
-	float cy = camIntrinsics.cy();
-
-	CamCalibration intrinsics;
-	intrinsics(0, 0) = fx;
-	intrinsics(1, 1) = fy;
-	intrinsics(0, 2) = cx;
-	intrinsics(1, 2) = cy;
-	intrinsics(2, 2) = 1;
-
-	return intrinsics;
-}
-
-SRef<Image> ParseImageRPC(ImageRPC imageRPC)
-{
-	SRef<Image> imgSrc;
-	uint8_t* dataPointer = (uint8_t*) imageRPC.data().c_str();
-	imgSrc = xpcf::utils::make_shared<Image>(dataPointer, imageRPC.width(), imageRPC.height(), Image::ImageLayout::LAYOUT_GREY, Image::PixelOrder::INTERLEAVED, Image::DataType::TYPE_8U);
-	// Convert from grayscale to RGB using OpenCV
-	cv::Mat imgGray(imgSrc->getHeight(), imgSrc->getWidth(), CV_8UC1, imgSrc->data());
-	cv::Mat imgColor;
-	cv::cvtColor(imgGray, imgColor, cv::COLOR_GRAY2RGB);
-	SRef<Image> imgDest;
-	imgDest = xpcf::utils::make_shared<Image>(imgColor.ptr(), imgColor.cols, imgColor.rows, Image::ImageLayout::LAYOUT_RGB, Image::PixelOrder::INTERLEAVED, Image::DataType::TYPE_8U);
-	return imgDest;
-}
-
-PoseMatrix ParseMatRPC(MatRPC matRPC)
-{
-	PoseMatrix mat;
-	mat(0, 0) = matRPC.m11();
-	mat(0, 1) = matRPC.m21();
-	mat(0, 2) = matRPC.m31();
-	mat(0, 3) = matRPC.m41();
-	mat(1, 0) = matRPC.m12();
-	mat(1, 1) = matRPC.m22();
-	mat(1, 2) = matRPC.m32();
-	mat(1, 3) = matRPC.m42();
-	mat(2, 0) = matRPC.m13();
-	mat(2, 1) = matRPC.m23();
-	mat(2, 2) = matRPC.m33();
-	mat(2, 3) = matRPC.m43();
-	mat(3, 0) = matRPC.m14();
-	mat(3, 1) = matRPC.m24();
-	mat(3, 2) = matRPC.m34();
-	mat(3, 3) = matRPC.m44();
-
-	return mat;
-}
-
-PoseMatrix ParsePoseRPC(PoseRPC poseRPC)
-{
-	PoseMatrix camProj = ParseMatRPC(poseRPC.cameraproj());
-	PoseMatrix camView = ParseMatRPC(poseRPC.cameraview());
-	PoseMatrix frameToOrigin = ParseMatRPC(poseRPC.frametoorigin());
-
-	PoseMatrix pose = PoseMatrix::Zero();
-	// cameraToImage flips Y and Z axis to comply with the output coordinate system.
-	PoseMatrix cameraToImage = PoseMatrix::Identity();
-	cameraToImage(1, 1) = -1;
-	cameraToImage(2, 2) = -1;
-
-	bool invert_ok;
-	PoseMatrix frameToOrigin_inv;
-	frameToOrigin.computeInverseWithCheck(frameToOrigin_inv, invert_ok);
-	if (invert_ok)
-	{
-		pose = cameraToImage * camView * frameToOrigin_inv;
-	}
-	else
-	{
-		LOG_WARNING("Matrix not invertible, invalid pose");
-	}
-	return pose;
-}
 
 SolARBuiltInSLAM::SolARBuiltInSLAM() : ConfigurableBase(xpcf::toUUID<SolARBuiltInSLAM>())
 {
@@ -151,7 +62,7 @@ xpcf::XPCFErrorCode SolARBuiltInSLAM::onConfigured()
 			if (intrinsic_parameters.empty())
 			{
 				LOG_ERROR("No intrinsics found in calibration file");
-					return xpcf::_FAIL;
+				return xpcf::_FAIL;
 			}
 
 			if (intrinsic_parameters.rows == camParams.intrinsic.rows() && intrinsic_parameters.cols == camParams.intrinsic.cols())
@@ -160,14 +71,14 @@ xpcf::XPCFErrorCode SolARBuiltInSLAM::onConfigured()
 						camParams.intrinsic(i, j) = (float)intrinsic_parameters.at<double>(i, j);
 			else
 			{
-				LOG_ERROR("Camera Calibration should be a 3x3 Matrix")
-					return xpcf::_FAIL;
+				LOG_ERROR("Camera Calibration should be a 3x3 Matrix");
+				return xpcf::_FAIL;
 			}
 
 			if (distortion_parameters.empty())
 			{
-				LOG_ERROR("No distortion parameters found in calibration file")
-					return xpcf::_FAIL;
+				LOG_ERROR("No distortion parameters found in calibration file");
+				return xpcf::_FAIL;
 			}
 
 			if (distortion_parameters.rows == camParams.distorsion.rows() && distortion_parameters.cols == camParams.distorsion.cols())
@@ -176,20 +87,18 @@ xpcf::XPCFErrorCode SolARBuiltInSLAM::onConfigured()
 						camParams.distorsion(i, j) = distortion_parameters.at<double>(i, j);
 			else
 			{
-				LOG_ERROR("Camera distortion matrix should be a 5x1 Matrix")
-					return xpcf::_FAIL;
+				LOG_ERROR("Camera distortion matrix should be a 5x1 Matrix");
+				return xpcf::_FAIL;
 			}
-
 			m_camParameters.emplace_back(camParams);
 		}
 		return xpcf::_SUCCESS;
 	}
 	else
 	{
-		LOG_ERROR("Cannot open camera calibration file")
-			return xpcf::_FAIL;
+		LOG_ERROR("Cannot open camera calibration file");
+		return xpcf::_FAIL;
 	}
-
 	return xpcf::_SUCCESS;
 }
 
@@ -260,7 +169,7 @@ FrameworkReturnCode SolARBuiltInSLAM::EnableSensors(std::vector<std::string> sen
 }
 
 /// Deprecated
-FrameworkReturnCode SolARBuiltInSLAM::getLastCapture(std::vector<SRef<Image>> & frames, std::vector<PoseMatrix> & poses)
+FrameworkReturnCode SolARBuiltInSLAM::getLastCapture(std::vector<SRef<Image>> & frames, std::vector<Transform3Df> & poses)
 {
 	if (!m_isClientConnected)
 	{
@@ -271,19 +180,21 @@ FrameworkReturnCode SolARBuiltInSLAM::getLastCapture(std::vector<SRef<Image>> & 
 	SensorFrameRPC sensorFrame;
 	grpc::ClientContext m_context;
 	std::unique_ptr<grpc::ClientReader<SensorFrameRPC>> reader(
-		m_stub->SensorStream(&m_context, MakeNameRPC("vlc_lf"))
+		m_stub->SensorStream(&m_context, SolARHoloLensHelper::MakeNameRPC("vlc_lf"))
 	);
 	// Read stream buffer
+	SRef<Image> img;
+	Transform3Df pose;
 	while (reader->Read(&sensorFrame))
 	{
 		if (sensorFrame.has_image())
 		{
-			SRef<Image> img = ParseImageRPC(sensorFrame.image());
+			img = SolARHoloLensHelper::ParseImageRPC(sensorFrame.image());
             frames.emplace_back(img);
 		}
 		if (sensorFrame.has_pose())
 		{
-			PoseMatrix pose = ParsePoseRPC(sensorFrame.pose());
+			pose = SolARHoloLensHelper::ParsePoseRPC(sensorFrame.pose());
             poses.emplace_back(pose);
 		}
 	}
@@ -307,7 +218,7 @@ FrameworkReturnCode SolARBuiltInSLAM::RequestCapture(const std::string & camera_
 	LOG_DEBUG("Retrieving stream reader from the device...");
 	
 	m_capture = new ClientCall;
-	m_capture->reader = m_stub->SensorStream(&m_capture->context, MakeNameRPC(camera_name));
+	m_capture->reader = m_stub->SensorStream(&m_capture->context, SolARHoloLensHelper::MakeNameRPC(camera_name));
 
 	LOG_DEBUG("{}", m_capture->reader);
 	if (m_capture->reader == nullptr)
@@ -318,7 +229,7 @@ FrameworkReturnCode SolARBuiltInSLAM::RequestCapture(const std::string & camera_
 	return FrameworkReturnCode::_SUCCESS;
 }
 
-FrameworkReturnCode SolARBuiltInSLAM::ReadCapture(SRef<Image> & frame, PoseMatrix & pose)
+FrameworkReturnCode SolARBuiltInSLAM::ReadCapture(SRef<Image> & frame, Transform3Df & pose)
 {
 	if (!m_isClientConnected)
 	{
@@ -350,18 +261,17 @@ FrameworkReturnCode SolARBuiltInSLAM::ReadCapture(SRef<Image> & frame, PoseMatri
 		// Reader as new data that we can process
 		if (sensorFrame.has_image())
 		{
-			frame = ParseImageRPC(sensorFrame.image());
+			frame = SolARHoloLensHelper::ParseImageRPC(sensorFrame.image());
 		}
 		else
 			LOG_WARNING("No image!");
 		if (sensorFrame.has_pose())
 		{
-			pose = ParsePoseRPC(sensorFrame.pose());
+			pose = SolARHoloLensHelper::ParsePoseRPC(sensorFrame.pose());
 		}
 		else
 			LOG_WARNING("No pose!");
 		return FrameworkReturnCode::_SUCCESS;
-
 	}
 }
 
@@ -372,13 +282,15 @@ FrameworkReturnCode SolARBuiltInSLAM::RequestIntrinsicsFromDevice(const std::str
 		LOG_ERROR("Client not connected, can't satisfy request");
 		return FrameworkReturnCode::_ERROR_;
 	}
+	
 	LOG_DEBUG("getIntrinsics request");
 	CameraIntrinsicsRPC camParamsRPC;
-	grpc::Status status = m_stub->GetCamIntrinsics(&m_context, MakeNameRPC(camera_name), &camParamsRPC);
+	grpc::Status status = m_stub->GetCamIntrinsics(&m_context, SolARHoloLensHelper::MakeNameRPC(camera_name), &camParamsRPC);
 	LOG_DEBUG("getIntrinsics request end");
+	
 	if (status.ok())
 	{
-		camParams.intrinsic = ParseCameraIntrinsicsRPC(camParamsRPC);
+		camParams.intrinsic = SolARHoloLensHelper::ParseCameraIntrinsicsRPC(camParamsRPC);
 		return FrameworkReturnCode::_SUCCESS;
 	}
 	LOG_ERROR("getIntrinsics request failed: {}", status.error_message());

@@ -29,7 +29,7 @@ DEPENDENCIESCONFIG = sharedlib recursive install_recurse
 PROJECTCONFIG = QTVS
 
 #NOTE : CONFIG as staticlib or sharedlib, DEPENDENCIESCONFIG as staticlib or sharedlib and PROJECTDEPLOYDIR MUST BE DEFINED BEFORE templatelibbundle.pri inclusion
-include ($$shell_quote($$shell_path($$(REMAKEN_RULES_ROOT)/qmake/templateappconfig.pri)))
+include ($$(REMAKEN_RULES_ROOT)/qmake/templateappconfig.pri)
 
 
 DEFINES += BOOST_ALL_NO_LIB
@@ -64,4 +64,4 @@ config_files.files = $$files($${PWD}/../data/conf_Sample-HoloLens.xml) \
                      $$files($${PWD}/../data/hololens_sensors_calibration.yml)
 INSTALLS += config_files
 
-include ($$shell_quote($$shell_path($$(REMAKEN_RULES_ROOT)/qmake/remaken_install_target.pri)))) # Shell_quote & shell_path required for visual on windows
+include ($$(REMAKEN_RULES_ROOT)/qmake/remaken_install_target.pri)

@@ -70,10 +70,14 @@ android {
 header_files.path = $${PROJECTDEPLOYDIR}/interfaces
 header_files.files = $$files($${PWD}/interfaces/*.h*)
 
+header_sensorStreaming.path = $${PROJECTDEPLOYDIR}/interfaces/sensorStreaming
+header_sensorStreaming.files = $$files($${PWD}/interfaces/sensorStreaming/*.h*)
+
 xpcf_xml_files.path = $${USERHOMEFOLDER}/.xpcf/SolAR
 xpcf_xml_files.files=$$files($${PWD}/xpcf*.xml)
 
 INSTALLS += header_files
+INSTALLS += header_sensorStreaming
 INSTALLS += xpcf_xml_files
 
 OTHER_FILES += \
