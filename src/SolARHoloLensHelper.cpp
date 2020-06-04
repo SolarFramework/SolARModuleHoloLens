@@ -127,6 +127,11 @@ Transform3Df SolARHoloLensHelper::ParsePoseRPC(PoseRPC poseRPC)
 	return fromPoseMatrix(pose);
 }
 
+bool SolARHoloLensHelper::IsValidPose(Transform3Df pose)
+{
+	return !pose.isApprox(Transform3Df());
+}
+
 }
 }
 }

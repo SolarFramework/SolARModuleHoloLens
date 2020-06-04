@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 			return -1;
 		}
 		overlay3D->setCameraParameters(camParams.intrinsic, camParams.distorsion);
-		LOG_INFO("Loaded intrinsics \n{}\n\n{}", camParams.intrinsic, camParams.distorsion);
+		LOG_INFO("Loaded {} intrinsics \n{}\n\n{}", camera_name, camParams.intrinsic, camParams.distorsion);
 
 		// Enable device sensors, and prepare them for streaming
 		if (slamHoloLens->EnableSensors() == FrameworkReturnCode::_ERROR_)

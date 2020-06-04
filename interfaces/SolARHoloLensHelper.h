@@ -65,6 +65,9 @@ public:
 
 	/// @brief Compute the SolAR camera pose from the RPC pose
 	static Transform3Df ParsePoseRPC(PoseRPC poseRPC);
+
+	/// @brief check whether the given pose matrix looks correct or not
+	static bool IsValidPose(Transform3Df pose);
 };
 
 }

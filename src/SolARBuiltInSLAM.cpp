@@ -167,7 +167,7 @@ FrameworkReturnCode SolARBuiltInSLAM::EnableSensors()
 		LOG_ERROR("Some sensors could not be successfully enabled (enabled {} out of {} requested)", enabledCount, requestedCount);
 		return FrameworkReturnCode::_ERROR_;
 	}
-	LOG_DEBUG("All requested sensors are succesfully enabled!");
+	LOG_DEBUG("All requested sensors are successfully enabled!");
 	return FrameworkReturnCode::_SUCCESS;
 }
 
